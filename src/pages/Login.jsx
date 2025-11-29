@@ -1,22 +1,23 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import axios from "../services/api";
 import "../styles/Forms.css";
 
 export default function Login() {
   const [data, setData] = useState({ useremail: "", userpswd: "" });
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e) =>
     setData({ ...data, [e.target.name]: e.target.value });
 
-  const login = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("/auth/login", data);
+      login(res.data.token); // actualiza el contexto y redirige
       alert("Inicio exitoso");
-      console.log(res.data);
     } catch (err) {
       alert(err.response?.data?.message || "Datos incorrectos");
-      console.log(err);
     }
   };
 
@@ -24,21 +25,21 @@ export default function Login() {
     <div className="form-container">
       <h2>Iniciar Sesión</h2>
 
-      <form className="form-box" onSubmit={login}>
+      <form className="form-box" onSubmit={handleSubmit}>
         <input
           type="email"
           name="useremail"
           placeholder="Correo"
           onChange={handleChange}
+          required
         />
-
         <input
           type="password"
           name="userpswd"
           placeholder="Contraseña"
           onChange={handleChange}
+          required
         />
-
         <button type="submit">Ingresar</button>
 
         <button

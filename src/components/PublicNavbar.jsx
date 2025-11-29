@@ -5,13 +5,13 @@ export default function PublicNavbar() {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <Link to="/">Mi Proyecto</Link>
+        <Link to="/">Casino LL</Link>
       </div>
-
       <ul className="navbar-links">
         <li><Link to="/">Inicio</Link></li>
         <li><Link to="/register">Registrarse</Link></li>
         <li><Link to="/login">Iniciar Sesión</Link></li>
+        <li><Link to="/confirmarCuenta">Confirmar Cuenta</Link></li>
       </ul>
     </nav>
   );

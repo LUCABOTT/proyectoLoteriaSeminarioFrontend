@@ -1,40 +1,41 @@
 import { useState } from "react";
 import api from "../services/api";
 
-export default function ActivateAccount() {
+export default function ActivacionCuenta() {
   const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");
-  const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleConfirm = async (e) => {
     e.preventDefault();
     try {
       const res = await api.post("/auth/confirmarCuenta", { email, pin });
-      setMessage(res.data.message);
+      alert(res.data.message);
+      window.location.href = "/login"; // redirige al login
     } catch (err) {
-      setMessage(err.response?.data?.error || "Error al activar cuenta");
+      alert(err.response?.data?.error || "Error al confirmar usuario");
     }
   };
 
   return (
     <div className="form-container">
-      <h2>Activar Cuenta</h2>
-      <form onSubmit={handleSubmit} className="form-box">
-        <input
-          type="email"
-          placeholder="Correo"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+      <h2>Confirmar Cuenta</h2>
+      <form onSubmit={handleConfirm} className="form-box">
+        <input 
+          type="email" 
+          placeholder="Correo" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          required 
         />
-        <input
-          type="text"
-          placeholder="PIN de activación"
-          value={pin}
-          onChange={(e) => setPin(e.target.value)}
+        <input 
+          type="text" 
+          placeholder="Código PIN" 
+          value={pin} 
+          onChange={(e) => setPin(e.target.value)} 
+          required 
         />
-        <button type="submit">Activar Cuenta</button>
+        <button type="submit">Confirmar</button>
       </form>
-      {message && <p>{message}</p>}
     </div>
   );
 }

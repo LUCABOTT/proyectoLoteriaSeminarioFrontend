@@ -24,7 +24,7 @@ export default function Register() {
    try {
         const res = await axios.post("/auth/register", formData);
         alert("Usuario registrado con éxito. Revisa tu correo para activar la cuenta.");
-        navigate("/activate"); // ← redirige a la página de activación
+        navigate("/confirmarCuenta"); // ← redirige a la página de activación
 } catch (err) {
     alert(err.response?.data?.error || "Error al registrar");
 }

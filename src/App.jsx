@@ -1,6 +1,7 @@
+import React, { useContext } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-
+import { AuthProvider, AuthContext } from "./context/AuthContext";
+import PublicNavbar from "./components/PublicNavbar";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
@@ -11,32 +12,38 @@ import PrivateRoute from "./components/PrivateRoute";
 
 import "./App.css";
 
-function App() {
+function AppContent() {
+  const { isAuthenticated } = useContext(AuthContext);
+
+  return (
+    <>
+      {isAuthenticated ? <Navbar /> : <PublicNavbar />}
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/confirmarCuenta" element={<ActivacionCuenta />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
+}
+
+export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Navbar />
-
-        <Routes>
-          <Route path="/" element={<Home />} />
-
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-           <Route path="/confirmarCuenta" element={<ActivacionCuenta />} />
-
-          {/* Rutas protegidas */}
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
+        <AppContent />
       </AuthProvider>
     </BrowserRouter>
   );
 }
-
-export default App;
