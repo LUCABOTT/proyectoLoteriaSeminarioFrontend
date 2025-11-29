@@ -1,0 +1,139 @@
+/* =============================== */
+/* PALETA PREMIUM - SISTEMA LOTERÍA */
+/* =============================== */
+
+:root {
+  /* Colores principales */
+  --color-negro-elite: #0D0D0D;
+  --color-oro-premium: #C6A667;
+  --color-verde-esmeralda: #0F8F57;
+  --color-rojo-rubi: #B42222;
+  --color-plateado-suave: #E4E4E4;
+
+  /* Variantes */
+  --color-oro-claro: #E3C98C;
+  --color-negro-mas-oscuro: #000000;
+  --color-gris-oscuro: #8C8C8C;
+
+  /* Backgrounds */
+  --bg-primary: var(--color-negro-elite);
+  --bg-secondary: var(--color-plateado-suave);
+  --bg-card: #1A1A1A;
+
+  /* Texto */
+  --text-primary: #FFFFFF;
+  --text-secondary: var(--color-plateado-suave);
+  --text-highlight: var(--color-oro-premium);
+
+  /* Bordes */
+  --border-gold: var(--color-oro-premium);
+  --border-soft: #CCCCCC;
+}
+
+/* =============================== */
+/* ESTILOS BASE */
+/* =============================== */
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================== */
+/* COMPONENTES */
+/* =============================== */
+
+/* CARD */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 15px 0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+/* BOTONES */
+.btn-gold {
+  background: var(--color-oro-premium);
+  color: var(--color-negro-elite);
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease-in-out;
+}
+
+.btn-gold:hover {
+  background: var(--color-oro-claro);
+}
+
+.btn-danger {
+  background: var(--color-rojo-rubi);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease-in-out;
+}
+
+.btn-danger:hover {
+  background: #d43a3a;
+}
+
+.btn-success {
+  background: var(--color-verde-esmeralda);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease-in-out;
+}
+
+.btn-success:hover {
+  background: #12a564;
+}
+
+/* TITULOS */
+h1, h2, h3 {
+  color: var(--text-highlight);
+  margin-bottom: 10px;
+}
+
+/* TABLAS */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: var(--color-oro-premium);
+  color: var(--color-negro-elite);
+  padding: 10px;
+}
+
+.table td {
+  border: 1px solid var(--border-soft);
+  padding: 10px;
+  background: #1c1c1c;
+  color: var(--text-secondary);
+}
+
+/* INPUTS */
+input, select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+  background: #1b1b1b;
+  color: var(--text-primary);
+  width: 100%;
+  margin-bottom: 10px;
+}
