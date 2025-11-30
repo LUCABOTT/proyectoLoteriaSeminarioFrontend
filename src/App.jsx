@@ -1,24 +1,23 @@
-import React, { useContext } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider, AuthContext } from "./context/AuthContext";
-import PublicNavbar from "./components/PublicNavbar";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
+import { AuthProvider } from "./context/AuthContext";
 import ActivacionCuenta from "./pages/ActivacionCuenta";
 import Dashboard from "./pages/Dashboard";
-import PrivateRoute from "./components/PrivateRoute";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import { Navbar } from "./components/Navbar";
+import { Footer } from "./components/Footer";
 
 import "./App.css";
 
 function AppContent() {
-  const { isAuthenticated } = useContext(AuthContext);
+  const location = useLocation();
+  const hideNavbarAndFooter = ["/login", "/register"].includes(location.pathname);
 
   return (
     <>
-      {isAuthenticated ? <Navbar /> : <PublicNavbar />}
-
+      {!hideNavbarAndFooter && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -34,6 +33,7 @@ function AppContent() {
           }
         />
       </Routes>
+      {!hideNavbarAndFooter && <Footer />}
     </>
   );
 }

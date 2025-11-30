@@ -1,82 +1,30 @@
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Ticket } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-400 py-16 border-t border-gray-800">
-      <div className="container mx-auto px-6 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div className="col-span-1 md:col-span-1">
-            <h3 className="text-white text-2xl font-extrabold mb-4">Lotería</h3>
-            <p className="text-base leading-relaxed">
-              La plataforma de sorteos más transparente y segura. Cumple tus sueños hoy.
-            </p>
-          </div>
-          <div>
-            <h4 className="text-white font-bold text-lg mb-6">Loterías</h4>
-            <ul className="space-y-3 text-base">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  La Diaria
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Pega 3
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-bold text-lg mb-6">Ayuda</h4>
-            <ul className="space-y-3 text-base">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Preguntas frecuentes
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Soporte
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Términos y condiciones
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Política de privacidad
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-bold text-lg mb-6">Síguenos</h4>
-            <div className="flex gap-4">
-              <a
-                href="#"
-                className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="#"
-                className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all"
-              >
-                <Instagram size={20} />
-              </a>
-              <a
-                href="#"
-                className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-blue-400 hover:text-white transition-all"
-              >
-                <Twitter size={20} />
-              </a>
+    <footer className="bg-zinc-900 border-t border-zinc-800 py-12">
+      <div className="container mx-auto px-6 max-w-5xl">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-amber-400 flex items-center justify-center">
+              <Ticket className="w-5 h-5 text-zinc-950" />
             </div>
+            <span className="text-zinc-100 font-semibold text-lg">Lotería</span>
           </div>
-        </div>
-        <div className="border-t border-gray-800 pt-8 text-center text-base">
-          <p>&copy; 2025 Lotería. Todos los derechos reservados.</p>
+
+          <nav className="flex flex-wrap justify-center gap-8">
+            <a href="#" className="text-zinc-400 hover:text-zinc-100 text-sm transition-colors">
+              Términos
+            </a>
+            <a href="#" className="text-zinc-400 hover:text-zinc-100 text-sm transition-colors">
+              Privacidad
+            </a>
+            <a href="#" className="text-zinc-400 hover:text-zinc-100 text-sm transition-colors">
+              Contacto
+            </a>
+          </nav>
+
+          <p className="text-zinc-500 text-sm">© 2025 Lotería. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>
