@@ -136,7 +136,7 @@ export default function Home() {
               Ver sorteos activos
             </button>
             <button
-              onClick={() => (window.location.hash = "#login")}
+              onClick={() => (window.location.href = "/login")}
               className="px-8 py-4 bg-transparent text-zinc-100 text-base font-medium border border-zinc-700 hover:border-zinc-500 hover:bg-zinc-900 transition-colors w-full sm:w-auto"
             >
               Iniciar sesión
