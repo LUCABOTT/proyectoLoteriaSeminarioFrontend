@@ -66,7 +66,6 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 flex">
-      {/* Left Panel - Decorative */}
       <div className="hidden lg:flex lg:w-1/2 bg-zinc-900 items-center justify-center p-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-amber-400/5 to-transparent" />
         <div className="relative z-10 text-center">
@@ -78,7 +77,6 @@ export default function RegisterPage() {
             Únete a miles de ganadores y participa en sorteos con premios de hasta L. 3 millones.
           </p>
 
-          {/* Stats */}
           <div className="mt-12 grid grid-cols-2 gap-8">
             <div>
               <div className="text-2xl font-semibold text-amber-400 mb-1">10K+</div>
@@ -90,16 +88,14 @@ export default function RegisterPage() {
             </div>
           </div>
         </div>
-        {/* Decorative elements */}
+
         <div className="absolute top-20 left-20 w-2 h-2 bg-amber-400/30" />
         <div className="absolute bottom-32 right-20 w-3 h-3 bg-amber-400/20" />
         <div className="absolute top-1/3 right-12 w-1 h-1 bg-amber-400/40" />
       </div>
 
-      {/* Right Panel - Form */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 py-12 lg:px-16">
         <div className="w-full max-w-md mx-auto">
-          {/* Logo */}
           <Link to="/" className="inline-flex items-center gap-2 mb-12">
             <div className="w-10 h-10 bg-amber-400 flex items-center justify-center">
               <Ticket className="w-5 h-5 text-zinc-950" />
@@ -107,13 +103,11 @@ export default function RegisterPage() {
             <span className="text-zinc-100 font-semibold text-xl">Lotería</span>
           </Link>
 
-          {/* Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-semibold text-zinc-100 mb-2">Crear una cuenta</h1>
             <p className="text-zinc-400 text-sm">Completa el formulario para comenzar a participar</p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>

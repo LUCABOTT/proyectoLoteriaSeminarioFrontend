@@ -94,7 +94,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-zinc-800" />
@@ -114,7 +113,6 @@ export default function LoginPage() {
             Continuar con Google
           </button>
 
-          {/* Sign Up Link */}
           <p className="mt-8 text-center text-sm text-zinc-400">
             ¿No tienes una cuenta?{" "}
             <Link to="/register" className="text-amber-400 hover:text-amber-300 transition-colors font-medium">
@@ -124,7 +122,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right Panel - Decorative */}
       <div className="hidden lg:flex lg:w-1/2 bg-zinc-900 items-center justify-center p-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-amber-400/5 to-transparent" />
         <div className="relative z-10 text-center">
@@ -136,7 +133,6 @@ export default function LoginPage() {
             Accede a tu cuenta y participa en los mejores sorteos con premios millonarios.
           </p>
         </div>
-        {/* Decorative elements */}
         <div className="absolute top-20 right-20 w-2 h-2 bg-amber-400/30" />
         <div className="absolute bottom-32 left-20 w-3 h-3 bg-amber-400/20" />
         <div className="absolute top-1/3 left-12 w-1 h-1 bg-amber-400/40" />

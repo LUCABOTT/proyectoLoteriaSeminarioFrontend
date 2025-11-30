@@ -160,7 +160,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Countdown Section */}
       <section id="contador" className="py-24 bg-zinc-900">
         <div className="container mx-auto px-6 max-w-5xl">
           {lotteryData ? (
@@ -233,7 +232,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works Section */}
       <section id="como-funciona" className="py-24 bg-zinc-950 relative overflow-hidden">
         <div className="container mx-auto px-6 max-w-5xl relative z-10">
           <div className="text-center mb-16">
