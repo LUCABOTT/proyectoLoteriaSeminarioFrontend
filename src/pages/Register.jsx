@@ -124,7 +124,7 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label htmlFor="secondName" className="block text-sm font-medium text-zinc-300 mb-2">
-                  Segundo nombre <span className="text-zinc-500">(opcional)</span>
+                  Segundo nombre
                 </label>
                 <input
                   id="secondName"
@@ -150,7 +150,7 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label htmlFor="secondLastName" className="block text-sm font-medium text-zinc-300 mb-2">
-                  Segundo apellido <span className="text-zinc-500">(opcional)</span>
+                  Segundo apellido
                 </label>
                 <input
                   id="secondLastName"
