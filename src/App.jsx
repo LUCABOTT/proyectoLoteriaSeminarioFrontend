@@ -9,8 +9,6 @@ import Register from "./pages/Register";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 
-import "./App.css";
-
 function AppContent() {
   const location = useLocation();
   const hideNavbarAndFooter = ["/login", "/register"].includes(location.pathname);

@@ -1,49 +1,40 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "../services/api";
-import "../styles/Forms.css";
-import { Axios } from "axios";
+import api from "../services/api";
 
-export default function ActivateAccount() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    pin: ""
-  });
+export default function ActivacionCuenta() {
+  const [email, setEmail] = useState("");
+  const [pin, setPin] = useState("");
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e) => {
+  const handleConfirm = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/auth/confirmarCuenta", formData); // ruta de tu backend para confirmar usuario
+      const res = await api.post("/auth/confirmarCuenta", { email, pin });
       alert(res.data.message);
-      navigate("/login"); // redirige al login luego de activar
+      window.location.href = "/login"; // redirige al login
     } catch (err) {
-      alert(err.response?.data?.error || "Error al activar cuenta");
+      alert(err.response?.data?.error || "Error al confirmar usuario");
     }
   };
 
   return (
     <div className="form-container">
-      <h2>Activar Cuenta</h2>
-      <form className="form-box" onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo"
-          value={formData.email}
-          onChange={handleChange}
+      <h2>Confirmar Cuenta</h2>
+      <form onSubmit={handleConfirm} className="form-box">
+        <input 
+          type="email" 
+          placeholder="Correo" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          required 
         />
-        <input
-          type="text"
-          name="pin"
-          placeholder="Código PIN"
-          value={formData.pin}
-          onChange={handleChange}
+        <input 
+          type="text" 
+          placeholder="Código PIN" 
+          value={pin} 
+          onChange={(e) => setPin(e.target.value)} 
+          required 
         />
-        <button type="submit">Activar Cuenta</button>
+        <button type="submit">Confirmar</button>
       </form>
     </div>
   );
