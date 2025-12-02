@@ -2,6 +2,7 @@
 
 import { Calendar, Clock, CreditCard, DollarSign, Gift, Tag, Ticket, UserCheck, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button, Card, Badge, Spinner } from "../components/ui";
 
 const CountdownTimer = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({
@@ -131,18 +132,22 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
-            <button
+            <Button
               onClick={() => (window.location.hash = "#contador")}
-              className="px-8 py-4 bg-amber-400 text-zinc-950 text-base font-medium hover:bg-amber-300 transition-colors w-full sm:w-auto"
+              variant="primary"
+              size="xl"
+              className="w-full sm:w-auto"
             >
               Ver sorteos activos
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => (window.location.href = "/login")}
-              className="px-8 py-4 bg-transparent text-zinc-100 text-base font-medium border border-zinc-700 hover:border-zinc-500 hover:bg-zinc-900 transition-colors w-full sm:w-auto"
+              variant="outline"
+              size="xl"
+              className="w-full sm:w-auto"
             >
               Iniciar sesión
-            </button>
+            </Button>
           </div>
 
           <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto">
@@ -167,10 +172,10 @@ export default function Home() {
           {lotteryData ? (
             <>
               <div className="text-center mb-16">
-                <div className="inline-flex items-center gap-2 bg-amber-400/10 text-amber-400 px-4 py-2 text-sm font-medium mb-6 border border-amber-400/20">
+                <Badge variant="primary" className="mb-6 inline-flex items-center gap-2">
                   <Clock size={16} />
                   Cierra pronto
-                </div>
+                </Badge>
                 <h2 className="text-3xl md:text-5xl font-semibold text-zinc-100 mb-4">{lotteryData.name}</h2>
                 <p className="text-zinc-400 text-base max-w-xl mx-auto">{lotteryData.description}</p>
               </div>
@@ -180,7 +185,7 @@ export default function Home() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-                <div className="bg-zinc-950 p-6 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                <Card hover className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-zinc-900 flex items-center justify-center shrink-0">
                       <Users className="w-5 h-5 text-amber-400" />
@@ -192,9 +197,9 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Card>
 
-                <div className="bg-zinc-950 p-6 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                <Card hover className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-zinc-900 flex items-center justify-center shrink-0">
                       <Tag className="w-5 h-5 text-amber-400" />
@@ -204,9 +209,9 @@ export default function Home() {
                       <p className="text-lg text-zinc-100 font-semibold tabular-nums">{lotteryData.minPurchase}</p>
                     </div>
                   </div>
-                </div>
+                </Card>
 
-                <div className="bg-zinc-950 p-6 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                <Card hover className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-zinc-900 flex items-center justify-center shrink-0">
                       <Calendar className="w-5 h-5 text-amber-400" />
@@ -216,20 +221,17 @@ export default function Home() {
                       <p className="text-lg text-zinc-100 font-semibold">{lotteryData.drawDate}</p>
                     </div>
                   </div>
-                </div>
+                </Card>
               </div>
 
               <div className="text-center">
-                <button className="px-12 py-4 bg-amber-400 text-zinc-950 hover:bg-amber-300 transition-colors text-base font-medium">
+                <Button variant="primary" size="xl">
                   Comprar boleto ahora
-                </button>
+                </Button>
               </div>
             </>
           ) : (
-            <div className="text-center py-20">
-              <div className="animate-spin h-12 w-12 border-2 border-amber-400 border-t-transparent mx-auto"></div>
-              <p className="text-zinc-500 mt-4 text-base">Cargando sorteo...</p>
-            </div>
+            <Spinner center size="xl" />
           )}
         </div>
       </section>

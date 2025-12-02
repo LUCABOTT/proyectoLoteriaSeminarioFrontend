@@ -3,6 +3,7 @@ import { Ticket } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import { getAllLotteries } from "../services/lotteryService";
 import BuyTicketModal from "../components/BuyTicketModal";
+import { Card, Alert, Button, Badge } from "../components/ui";
 
 const CountdownTimer = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({
@@ -105,12 +106,9 @@ const LotteryCard = ({ lottery, onSelectLottery }) => {
 
       <div className="flex items-center justify-between">
         <div className="text-sm text-zinc-400">Desde {formatCurrency(lottery.ticketPrice)}</div>
-        <button
-          onClick={() => onSelectLottery(lottery)}
-          className="px-6 py-2 bg-amber-400 text-zinc-950 text-sm font-medium hover:bg-amber-300 transition-colors"
-        >
+        <Button onClick={() => onSelectLottery(lottery)} variant="primary" size="md">
           Comprar
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -175,16 +173,16 @@ export default function Lotteries() {
             <p className="text-zinc-400">Bienvenido, {user?.firstName}. Selecciona un sorteo y prueba tu suerte</p>
           </div>
 
-          {error && <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 mb-6">{error}</div>}
+          {error && <Alert variant="error">{error}</Alert>}
 
           {showSuccess && purchasedTicket && (
-            <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 mb-6">
+            <Alert variant="success">
               <p className="font-semibold mb-2">¡Ticket comprado exitosamente!</p>
               <p className="text-sm">
                 Número de ticket: <span className="font-mono font-bold">{purchasedTicket.ticketNumber}</span>
               </p>
               <p className="text-sm">Números: {purchasedTicket.numbers.join(" - ")}</p>
-            </div>
+            </Alert>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
