@@ -1,13 +1,20 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, AuthContext } from "./context/AuthContext";
 import ActivacionCuenta from "./pages/ActivacionCuenta";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Lotteries from "./pages/Lotteries";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
+import { useContext } from "react";
+
+function HomeRedirect() {
+  const { isAuthenticated } = useContext(AuthContext);
+  return isAuthenticated ? <Navigate to="/sorteos" replace /> : <Home />;
+}
 
 function AppContent() {
   const location = useLocation();
@@ -17,10 +24,19 @@ function AppContent() {
     <>
       {!hideNavbarAndFooter && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomeRedirect />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/confirmarCuenta" element={<ActivacionCuenta />} />
+
+        <Route
+          path="/sorteos"
+          element={
+            <PrivateRoute>
+              <Lotteries />
+            </PrivateRoute>
+          }
+        />
 
         <Route
           path="/dashboard"

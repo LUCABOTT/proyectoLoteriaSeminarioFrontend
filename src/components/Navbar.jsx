@@ -11,7 +11,7 @@ const publicNavLinks = [
 ];
 
 const privateNavLinks = [
-  { label: "Mis Sorteos", href: "/dashboard/sorteos" },
+  { label: "Sorteos", href: "/sorteos" },
   { label: "Mis Tickets", href: "/dashboard/tickets" },
   { label: "Historial", href: "/dashboard/historial" },
 ];
@@ -50,7 +50,7 @@ export function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800">
       <div className="container mx-auto px-6 max-w-5xl">
         <div className="flex items-center justify-between h-16">
-          <Link to={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-2">
+          <Link to={isAuthenticated ? "/sorteos" : "/"} className="flex items-center gap-2">
             <div className="w-8 h-8 bg-amber-400 flex items-center justify-center">
               <Ticket className="w-4 h-4 text-zinc-950" />
             </div>

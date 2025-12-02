@@ -6,12 +6,42 @@ Este proyecto actualmente **NO** utiliza una API real. Todos los datos se almace
 
 ## 🔧 Funcionamiento
 
-### Base de Datos Mock (`src/services/api.js`)
+### Base de Datos Mock
 
-El archivo `api.js` simula un backend completo con:
-
+**`src/services/api.js`** - Autenticación
 - **mockDB.users**: Array de usuarios registrados y activados
 - **mockDB.pendingActivations**: Map de activaciones pendientes
+
+**`src/services/lotteryApi.js`** - Sistema de Loterías
+- **mockLotteryDB.lotteries**: Array de loterías disponibles
+- **mockLotteryDB.purchases**: Array de tickets comprados
+- **mockLotteryDB.results**: Array de resultados de sorteos
+
+### Loterías Disponibles
+
+#### 1. **La Diaria**
+- **Tipo:** Sorteo diario
+- **Premio:** L. 250,000
+- **Precio del ticket:** L. 20
+- **Formato:** 4 dígitos (0-9)
+- **Hora de sorteo:** 18:00
+- **Frecuencia:** Todos los días
+
+#### 2. **Pega 3**
+- **Tipo:** Sorteo semanal
+- **Premio:** L. 500,000
+- **Precio del ticket:** L. 10
+- **Formato:** 3 dígitos (0-9)
+- **Hora de sorteo:** 20:00
+- **Frecuencia:** Miércoles y Sábados
+
+#### 3. **Loto HN**
+- **Tipo:** Sorteo semanal
+- **Premio:** L. 3,000,000
+- **Precio del ticket:** L. 50
+- **Formato:** 6 números (1-45)
+- **Hora de sorteo:** 21:00
+- **Frecuencia:** Domingos
 
 ### Servicios Disponibles
 
@@ -102,12 +132,28 @@ El archivo `api.js` simula un backend completo con:
 1. Ir a `/login`
 2. Ingresar email y contraseña
 3. Hacer clic en "Iniciar sesión"
-4. Serás redirigido al Dashboard
+4. **Serás redirigido automáticamente a /sorteos**
 
-### Paso 4: Ver Dashboard
+### Paso 4: Ver Sorteos Disponibles
 
-1. Dashboard muestra información del usuario logueado
-2. Botón de "Cerrar Sesión" disponible
+1. La página principal (/) cuando estés autenticado muestra `/sorteos`
+2. Verás las 3 loterías disponibles:
+   - **La Diaria** - Sorteo diario a las 18:00
+   - **Pega 3** - Miércoles y Sábados a las 20:00
+   - **Loto HN** - Domingos a las 21:00
+3. Cada tarjeta muestra:
+   - Premio mayor
+   - Formato de números
+   - Contador regresivo al próximo sorteo
+   - Precio del ticket
+   - Botón de compra
+
+### Paso 5: Comprar Tickets (Próximamente)
+
+La funcionalidad de compra está en desarrollo. Por ahora:
+- Haz clic en "Comprar"
+- Verás un alert confirmando la selección
+- Los datos se mostrarán en la consola
 
 ## 🐛 Debugging
 
@@ -118,13 +164,44 @@ Abrir consola del navegador y ejecutar:
 ```javascript
 // Ver todos los usuarios registrados
 getMockDB()
+
+// Ver todas las loterías y tickets
+getMockLotteryDB()
 ```
 
 Esto mostrará:
+
+**Autenticación:**
 ```javascript
 {
   users: [...],           // Usuarios activados
   pendingActivations: Map // Activaciones pendientes
+}
+```
+
+**Loterías:**
+```javascript
+{
+  lotteries: [            // Loterías disponibles
+    {
+      id: "la-diaria-001",
+      name: "La Diaria",
+      prize: 250000,
+      ticketPrice: 20,
+      nextDraw: "2024-12-02T18:00:00Z"
+    },
+    ...
+  ],
+  purchases: [            // Tickets comprados
+    {
+      userId: "user@example.com",
+      lotteryId: "la-diaria-001",
+      numbers: [1, 2, 3, 4],
+      ticketNumber: "TK123456789"
+    },
+    ...
+  ],
+  results: []            // Resultados de sorteos
 }
 ```
 
