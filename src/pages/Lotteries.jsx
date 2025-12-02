@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { Ticket } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import { getAllLotteries } from "../services/lotteryService";
+import BuyTicketModal from "../components/BuyTicketModal";
 
 const CountdownTimer = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({
@@ -130,6 +131,9 @@ export default function Lotteries() {
   const [lotteries, setLotteries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedLottery, setSelectedLottery] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [purchasedTicket, setPurchasedTicket] = useState(null);
 
   useEffect(() => {
     loadLotteries();
@@ -148,8 +152,18 @@ export default function Lotteries() {
   };
 
   const handleSelectLottery = (lottery) => {
-    console.log("Selected lottery:", lottery);
-    alert(`Función de compra en desarrollo para: ${lottery.name}`);
+    setSelectedLottery(lottery);
+  };
+
+  const handlePurchaseSuccess = (ticket) => {
+    setPurchasedTicket(ticket);
+    setSelectedLottery(null);
+    setShowSuccess(true);
+    
+    setTimeout(() => {
+      setShowSuccess(false);
+      setPurchasedTicket(null);
+    }, 5000);
   };
 
   if (loading) {
@@ -163,40 +177,62 @@ export default function Lotteries() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 pt-20 px-6 pb-12">
-      <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-zinc-100 mb-2">
-            Sorteos Disponibles
-          </h1>
-          <p className="text-zinc-400">
-            Bienvenido, {user?.firstName}. Selecciona un sorteo y prueba tu suerte
-          </p>
-        </div>
-
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 mb-6">
-            {error}
+    <>
+      <div className="min-h-screen bg-zinc-950 pt-20 px-6 pb-12">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-zinc-100 mb-2">
+              Sorteos Disponibles
+            </h1>
+            <p className="text-zinc-400">
+              Bienvenido, {user?.firstName}. Selecciona un sorteo y prueba tu suerte
+            </p>
           </div>
-        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {lotteries.map((lottery) => (
-            <LotteryCard
-              key={lottery.id}
-              lottery={lottery}
-              onSelectLottery={handleSelectLottery}
-            />
-          ))}
-        </div>
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 mb-6">
+              {error}
+            </div>
+          )}
 
-        {lotteries.length === 0 && !loading && (
-          <div className="text-center py-20">
-            <Ticket className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-            <p className="text-zinc-500">No hay sorteos disponibles en este momento</p>
+          {showSuccess && purchasedTicket && (
+            <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 mb-6">
+              <p className="font-semibold mb-2">¡Ticket comprado exitosamente!</p>
+              <p className="text-sm">
+                Número de ticket: <span className="font-mono font-bold">{purchasedTicket.ticketNumber}</span>
+              </p>
+              <p className="text-sm">
+                Números: {purchasedTicket.numbers.join(" - ")}
+              </p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {lotteries.map((lottery) => (
+              <LotteryCard
+                key={lottery.id}
+                lottery={lottery}
+                onSelectLottery={handleSelectLottery}
+              />
+            ))}
           </div>
-        )}
+
+          {lotteries.length === 0 && !loading && (
+            <div className="text-center py-20">
+              <Ticket className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+              <p className="text-zinc-500">No hay sorteos disponibles en este momento</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+
+      {selectedLottery && (
+        <BuyTicketModal
+          lottery={selectedLottery}
+          onClose={() => setSelectedLottery(null)}
+          onSuccess={handlePurchaseSuccess}
+        />
+      )}
+    </>
   );
 }

@@ -1,10 +1,48 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Ticket, User, Mail, Calendar, TrendingUp, Award, ShoppingCart, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getMyTickets } from "../services/lotteryService";
 
 export default function Dashboard() {
   const { user, logout } = useContext(AuthContext);
+  const [stats, setStats] = useState({
+    totalPurchases: 0,
+    totalSpent: 0,
+    activePurchases: 0,
+    purchases: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadStats();
+  }, [user]);
+
+  const loadStats = async () => {
+    if (!user?.id) return;
+    
+    try {
+      const data = await getMyTickets(user.id);
+      setStats({
+        totalPurchases: data.total,
+        totalSpent: data.totalSpent,
+        activePurchases: data.activePurchases,
+        purchases: data.purchases
+      });
+    } catch (err) {
+      console.error("Error loading stats:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('es-HN', {
+      style: 'currency',
+      currency: 'HNL',
+      minimumFractionDigits: 0
+    }).format(amount);
+  };
 
   return (
     <div className="min-h-screen bg-zinc-950 pt-20 px-6 pb-12">
@@ -28,7 +66,9 @@ export default function Dashboard() {
               </div>
               <span className="text-xs text-zinc-500">Total</span>
             </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">0</div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">
+              {loading ? "..." : stats.activePurchases}
+            </div>
             <div className="text-sm text-zinc-500">Tickets activos</div>
           </div>
 
@@ -39,7 +79,9 @@ export default function Dashboard() {
               </div>
               <span className="text-xs text-zinc-500">Premios</span>
             </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">L. 0</div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">
+              {formatCurrency(0)}
+            </div>
             <div className="text-sm text-zinc-500">Ganado</div>
           </div>
 
@@ -50,7 +92,9 @@ export default function Dashboard() {
               </div>
               <span className="text-xs text-zinc-500">Inversión</span>
             </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">L. 0</div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">
+              {loading ? "..." : formatCurrency(stats.totalSpent)}
+            </div>
             <div className="text-sm text-zinc-500">Gastado</div>
           </div>
 
@@ -61,7 +105,9 @@ export default function Dashboard() {
               </div>
               <span className="text-xs text-zinc-500">Total</span>
             </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">0</div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">
+              {loading ? "..." : stats.totalPurchases}
+            </div>
             <div className="text-sm text-zinc-500">Participaciones</div>
           </div>
         </div>
@@ -149,29 +195,84 @@ export default function Dashboard() {
             {/* Recent Activity */}
             <div className="bg-zinc-900 border border-zinc-800 p-6 mb-6">
               <h3 className="text-lg font-semibold text-zinc-100 mb-4">Actividad Reciente</h3>
-              <div className="text-center py-12">
-                <Ticket className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-                <p className="text-zinc-500 mb-2">No hay actividad reciente</p>
-                <p className="text-sm text-zinc-600">Compra tu primer ticket para comenzar</p>
-              </div>
+              {loading ? (
+                <div className="text-center py-12">
+                  <p className="text-zinc-500">Cargando...</p>
+                </div>
+              ) : stats.purchases.length > 0 ? (
+                <div className="space-y-3">
+                  {stats.purchases.slice(0, 5).map((purchase) => (
+                    <div key={purchase.id} className="flex items-center justify-between p-3 bg-zinc-950 border border-zinc-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
+                          <Ticket className="w-5 h-5 text-amber-400" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-zinc-100">{purchase.lotteryName}</p>
+                          <p className="text-xs text-zinc-500">
+                            {new Date(purchase.purchaseDate).toLocaleDateString('es-HN')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-zinc-100">{formatCurrency(purchase.price)}</p>
+                        <p className="text-xs text-zinc-500">{purchase.numbers.join("-")}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Ticket className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+                  <p className="text-zinc-500 mb-2">No hay actividad reciente</p>
+                  <p className="text-sm text-zinc-600">Compra tu primer ticket para comenzar</p>
+                </div>
+              )}
             </div>
 
             {/* Active Tickets */}
             <div className="bg-zinc-900 border border-zinc-800 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-zinc-100">Tickets Activos</h3>
-                <span className="text-xs text-zinc-500 bg-zinc-800 px-3 py-1">0 tickets</span>
+                <span className="text-xs text-zinc-500 bg-zinc-800 px-3 py-1">
+                  {loading ? "..." : `${stats.activePurchases} tickets`}
+                </span>
               </div>
-              <div className="text-center py-12">
-                <Award className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-                <p className="text-zinc-500 mb-2">No tienes tickets activos</p>
-                <Link 
-                  to="/sorteos"
-                  className="inline-block mt-4 px-6 py-2 bg-amber-400 text-zinc-950 text-sm font-medium hover:bg-amber-300 transition-colors"
-                >
-                  Comprar Ticket
-                </Link>
-              </div>
+              {loading ? (
+                <div className="text-center py-12">
+                  <p className="text-zinc-500">Cargando...</p>
+                </div>
+              ) : stats.activePurchases > 0 ? (
+                <div className="space-y-3">
+                  {stats.purchases.filter(p => p.status === "pending").slice(0, 3).map((purchase) => (
+                    <div key={purchase.id} className="p-4 bg-zinc-950 border border-zinc-800">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-semibold text-zinc-100">{purchase.lotteryName}</h4>
+                        <span className="text-xs text-amber-400 bg-amber-400/10 px-2 py-1">Pendiente</span>
+                      </div>
+                      <p className="text-xs text-zinc-500 mb-2">Ticket: {purchase.ticketNumber}</p>
+                      <div className="flex gap-1">
+                        {purchase.numbers.map((num, idx) => (
+                          <div key={idx} className="w-8 h-8 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-xs font-bold text-amber-400">
+                            {num}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Award className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+                  <p className="text-zinc-500 mb-2">No tienes tickets activos</p>
+                  <Link 
+                    to="/sorteos"
+                    className="inline-block mt-4 px-6 py-2 bg-amber-400 text-zinc-950 text-sm font-medium hover:bg-amber-300 transition-colors"
+                  >
+                    Comprar Ticket
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
