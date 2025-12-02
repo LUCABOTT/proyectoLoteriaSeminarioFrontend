@@ -49,13 +49,11 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-zinc-950 pt-20 px-6 pb-12">
       <div className="container mx-auto max-w-7xl">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Dashboard</h1>
           <p className="text-zinc-400">Bienvenido de nuevo, {user?.firstName}</p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -104,9 +102,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Profile Card */}
           <div className="lg:col-span-1">
             <Card className="p-6 mb-6">
               <div className="flex items-center gap-4 mb-6">
@@ -145,11 +141,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <Button
-                onClick={logout}
-                variant="danger"
-                className="w-full mt-6"
-              >
+              <Button onClick={logout} variant="danger" className="w-full mt-6">
                 Cerrar sesión
               </Button>
             </Card>
@@ -182,9 +174,7 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Activity Area */}
           <div className="lg:col-span-2">
-            {/* Recent Activity */}
             <Card className="p-6 mb-6">
               <h3 className="text-lg font-semibold text-zinc-100 mb-4">Actividad reciente</h3>
               {loading ? (
@@ -226,9 +216,7 @@ export default function Dashboard() {
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-zinc-100">Boletos activos</h3>
-                <Badge variant="default">
-                  {loading ? "..." : `${stats.activePurchases} boletos`}
-                </Badge>
+                <Badge variant="default">{loading ? "..." : `${stats.activePurchases} boletos`}</Badge>
               </div>
               {loading ? (
                 <Spinner center />

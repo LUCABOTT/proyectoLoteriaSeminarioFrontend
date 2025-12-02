@@ -48,7 +48,6 @@ function AppContent() {
           }
         />
 
-        {/* 404 - Catch all unmatched routes */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       {!hideNavbarAndFooter && <Footer />}
