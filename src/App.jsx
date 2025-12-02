@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
+import GuestRoute from "./components/GuestRoute";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import ActivacionCuenta from "./pages/ActivacionCuenta";
 import Dashboard from "./pages/Dashboard";
@@ -27,9 +28,33 @@ function AppContent() {
       {!hideNavbarAndFooter && <Navbar />}
       <Routes>
         <Route path="/" element={<HomeRedirect />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/confirmarCuenta" element={<ActivacionCuenta />} />
+        
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+        
+        <Route
+          path="/register"
+          element={
+            <GuestRoute>
+              <Register />
+            </GuestRoute>
+          }
+        />
+        
+        <Route
+          path="/confirmarCuenta"
+          element={
+            <GuestRoute>
+              <ActivacionCuenta />
+            </GuestRoute>
+          }
+        />
 
         <Route
           path="/sorteos"
