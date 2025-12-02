@@ -1,20 +1,32 @@
 import { Ticket, Eye, EyeOff, Check } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { registerUser } from "../services/authService";
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [password, setPassword] = useState("");
-  const [dni, setDni] = useState("");
-  const [phone, setPhone] = useState("");
-  const [birthDate, setBirthDate] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const isPasswordValid = password.length >= 8;
+  const [formData, setFormData] = useState({
+    firstName: "",
+    secondName: "",
+    lastName: "",
+    secondLastName: "",
+    dni: "",
+    birthDate: "",
+    email: "",
+    phone: "",
+    password: ""
+  });
 
-  const isDniValid = /^\d{13}$/.test(dni);
+  const isPasswordValid = formData.password.length >= 8;
 
-  const isPhoneValid = /^\d{8}$/.test(phone);
+  const isDniValid = /^\d{13}$/.test(formData.dni);
+
+  const isPhoneValid = /^\d{8}$/.test(formData.phone);
 
   const validateAge = (dateString) => {
     if (!dateString) return { isValid: false, message: "" };
@@ -37,7 +49,7 @@ export default function RegisterPage() {
     return { isValid: true, message: "" };
   };
 
-  const birthDateValidation = validateAge(birthDate);
+  const birthDateValidation = validateAge(formData.birthDate);
 
   const today = new Date();
   const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()).toISOString().split("T")[0];
@@ -46,9 +58,22 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!birthDateValidation.isValid) return;
+
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await registerUser(formData);
+      setSuccess(response.message);
+      setTimeout(() => {
+        navigate("/confirmarCuenta");
+      }, 2000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatDni = (value) => {
@@ -62,6 +87,10 @@ export default function RegisterPage() {
     const digits = value.replace(/\D/g, "").slice(0, 8);
     if (digits.length <= 4) return digits;
     return `${digits.slice(0, 4)}-${digits.slice(4)}`;
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -109,6 +138,18 @@ export default function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 text-sm">
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 text-sm">
+                {success}
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-zinc-300 mb-2">
@@ -118,6 +159,8 @@ export default function RegisterPage() {
                   id="firstName"
                   type="text"
                   required
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange("firstName", e.target.value)}
                   className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors"
                   placeholder="Juan"
                 />
@@ -129,6 +172,8 @@ export default function RegisterPage() {
                 <input
                   id="secondName"
                   type="text"
+                  value={formData.secondName}
+                  onChange={(e) => handleInputChange("secondName", e.target.value)}
                   className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors"
                   placeholder="Carlos"
                 />
@@ -144,6 +189,8 @@ export default function RegisterPage() {
                   id="lastName"
                   type="text"
                   required
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange("lastName", e.target.value)}
                   className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors"
                   placeholder="Pérez"
                 />
@@ -155,6 +202,8 @@ export default function RegisterPage() {
                 <input
                   id="secondLastName"
                   type="text"
+                  value={formData.secondLastName}
+                  onChange={(e) => handleInputChange("secondLastName", e.target.value)}
                   className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors"
                   placeholder="García"
                 />
@@ -169,12 +218,12 @@ export default function RegisterPage() {
                 id="dni"
                 type="text"
                 required
-                value={formatDni(dni)}
-                onChange={(e) => setDni(e.target.value.replace(/\D/g, ""))}
+                value={formatDni(formData.dni)}
+                onChange={(e) => handleInputChange("dni", e.target.value.replace(/\D/g, ""))}
                 className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors"
                 placeholder="0000-0000-00000"
               />
-              {dni.length > 0 && !isDniValid && (
+              {formData.dni.length > 0 && !isDniValid && (
                 <p className="text-xs text-zinc-500 mt-1">El DNI debe tener 13 dígitos</p>
               )}
             </div>
@@ -187,13 +236,13 @@ export default function RegisterPage() {
                 id="birthDate"
                 type="date"
                 required
-                value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
+                value={formData.birthDate}
+                onChange={(e) => handleInputChange("birthDate", e.target.value)}
                 min={minDate}
                 max={maxDate}
                 className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors scheme-dark"
               />
-              {birthDate && !birthDateValidation.isValid && (
+              {formData.birthDate && !birthDateValidation.isValid && (
                 <p className="text-xs text-red-400 mt-1">{birthDateValidation.message}</p>
               )}
             </div>
@@ -206,6 +255,8 @@ export default function RegisterPage() {
                 id="email"
                 type="email"
                 required
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
                 className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors"
                 placeholder="usuario@correo.com"
               />
@@ -219,12 +270,12 @@ export default function RegisterPage() {
                 id="phone"
                 type="tel"
                 required
-                value={formatPhone(phone)}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                value={formatPhone(formData.phone)}
+                onChange={(e) => handleInputChange("phone", e.target.value.replace(/\D/g, ""))}
                 className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors"
                 placeholder="0000-0000"
               />
-              {phone.length > 0 && !isPhoneValid && (
+              {formData.phone.length > 0 && !isPhoneValid && (
                 <p className="text-xs text-zinc-500 mt-1">El teléfono debe tener 8 dígitos</p>
               )}
             </div>
@@ -238,8 +289,8 @@ export default function RegisterPage() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
                   className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm placeholder:text-zinc-500 focus:outline-none focus:border-amber-400 transition-colors pr-12"
                   placeholder="••••••••"
                 />
@@ -251,7 +302,7 @@ export default function RegisterPage() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {password.length > 0 && (
+              {formData.password.length > 0 && (
                 <div className="mt-3">
                   <div className="flex items-center gap-2 text-xs">
                     <div
