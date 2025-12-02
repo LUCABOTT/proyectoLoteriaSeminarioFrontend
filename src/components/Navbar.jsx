@@ -1,4 +1,4 @@
-import { Menu, Ticket, X, User, LogOut } from "lucide-react";
+import { Menu, Ticket, X, User, LogOut, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -12,8 +12,8 @@ const publicNavLinks = [
 
 const privateNavLinks = [
   { label: "Sorteos", href: "/sorteos" },
-  { label: "Mis Tickets", href: "/dashboard/tickets" },
-  { label: "Historial", href: "/dashboard/historial" },
+  { label: "Billetera", href: "/billetera" },
+  { label: "Mis boletos", href: "/dashboard" },
 ];
 
 export function Navbar() {
@@ -92,6 +92,14 @@ export function Navbar() {
                       <User className="w-4 h-4" />
                       Mi perfil
                     </Link>
+                    <Link
+                      to="/billetera"
+                      onClick={() => setShowUserMenu(false)}
+                      className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
+                    >
+                      <Wallet className="w-4 h-4" />
+                      Mi billetera
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors text-left"
@@ -157,6 +165,14 @@ export function Navbar() {
                     >
                       <User className="w-4 h-4" />
                       Mi perfil
+                    </Link>
+                    <Link
+                      to="/billetera"
+                      onClick={() => setIsOpen(false)}
+                      className="px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Wallet className="w-4 h-4" />
+                      Mi billetera
                     </Link>
                     <button
                       onClick={handleLogout}

@@ -1,7 +1,8 @@
-import { useState, useContext } from "react";
-import { Ticket } from "lucide-react";
+import { useState, useContext, useEffect } from "react";
+import { Ticket, Wallet } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import { buyTicket } from "../services/lotteryService";
+import { getSaldo } from "../services/walletService";
 import { Modal, ModalHeader, ModalBody, Button, Alert, Card } from "./ui";
 
 export default function BuyTicketModal({ lottery, onClose, onSuccess }) {
@@ -9,10 +10,28 @@ export default function BuyTicketModal({ lottery, onClose, onSuccess }) {
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [saldo, setSaldo] = useState(null);
+  const [loadingSaldo, setLoadingSaldo] = useState(true);
 
   const minNum = lottery.minNumber || 0;
   const maxNum = lottery.maxNumber;
   const numbersNeeded = lottery.numbersCount;
+
+  useEffect(() => {
+    loadSaldo();
+  }, []);
+
+  const loadSaldo = async () => {
+    try {
+      const data = await getSaldo();
+      setSaldo(data.saldo);
+    } catch (err) {
+      console.error("Error al cargar saldo:", err);
+      setSaldo(0);
+    } finally {
+      setLoadingSaldo(false);
+    }
+  };
 
   const toggleNumber = (num) => {
     if (selectedNumbers.includes(num)) {
@@ -41,14 +60,26 @@ export default function BuyTicketModal({ lottery, onClose, onSuccess }) {
       return;
     }
 
+    // Verificar saldo
+    if (saldo < lottery.ticketPrice) {
+      setError(`Saldo insuficiente. Tu saldo: ${formatCurrency(saldo)} - Necesitas: ${formatCurrency(lottery.ticketPrice)}`);
+      return;
+    }
+
     setIsLoading(true);
     setError("");
 
     try {
       const result = await buyTicket(user.id, lottery.id, selectedNumbers);
+      
+      // Actualizar saldo después de compra
+      await loadSaldo();
+      
       onSuccess(result.ticket);
     } catch (err) {
       setError(err.message);
+      // Recargar saldo en caso de error también
+      await loadSaldo();
     } finally {
       setIsLoading(false);
     }
@@ -77,6 +108,24 @@ export default function BuyTicketModal({ lottery, onClose, onSuccess }) {
       </ModalHeader>
 
       <ModalBody>
+        {/* Saldo del usuario */}
+        <Card className="p-4 mb-6 bg-zinc-800/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Wallet className="w-5 h-5 text-green-400" />
+              <span className="text-sm text-zinc-400">Tu saldo:</span>
+            </div>
+            <span className="text-lg font-bold text-green-400">
+              {loadingSaldo ? "..." : formatCurrency(saldo || 0)}
+            </span>
+          </div>
+          {!loadingSaldo && saldo < lottery.ticketPrice && (
+            <div className="mt-2 text-xs text-red-400">
+              ⚠️ Saldo insuficiente. Necesitas recargar {formatCurrency(lottery.ticketPrice - saldo)} más.
+            </div>
+          )}
+        </Card>
+
         <Card className="p-6 mb-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -159,7 +208,7 @@ export default function BuyTicketModal({ lottery, onClose, onSuccess }) {
             variant="primary"
             className="flex-1"
             isLoading={isLoading}
-            disabled={isLoading || selectedNumbers.length !== numbersNeeded}
+            disabled={isLoading || selectedNumbers.length !== numbersNeeded || saldo < lottery.ticketPrice}
           >
             {isLoading ? "Procesando..." : `Comprar por ${formatCurrency(lottery.ticketPrice)}`}
           </Button>

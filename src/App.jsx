@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Lotteries from "./pages/Lotteries";
+import Wallet from "./pages/Wallet";
 import NotFound from "./pages/NotFound";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
@@ -44,6 +45,15 @@ function AppContent() {
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/billetera"
+          element={
+            <PrivateRoute>
+              <Wallet />
             </PrivateRoute>
           }
         />

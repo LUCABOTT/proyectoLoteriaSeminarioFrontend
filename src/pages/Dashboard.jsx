@@ -1,104 +1,175 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { Ticket, User, Mail, Calendar, TrendingUp, Award, ShoppingCart, Clock } from "lucide-react";
+import { Ticket, User, Mail, Calendar, TrendingUp, Award, ShoppingCart, Clock, ArrowUpCircle, ArrowDownCircle, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getMyTickets } from "../services/lotteryService";
+import { getHistorial, getSaldo } from "../services/walletService";
+import { getUserProfile } from "../services/authService";
 import { Card, CardBody, Button, Badge, Spinner } from "../components/ui";
 
 export default function Dashboard() {
   const { user, logout } = useContext(AuthContext);
+  const [userProfile, setUserProfile] = useState(null);
+  const [saldo, setSaldo] = useState(0);
   const [stats, setStats] = useState({
-    totalPurchases: 0,
-    totalSpent: 0,
-    activePurchases: 0,
-    purchases: [],
+    totalTransactions: 0,
+    totalIncome: 0,
+    totalExpense: 0,
+    transactions: [],
   });
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     document.title = "Dashboard - Lotería";
-    loadStats();
+    loadDashboardData();
   }, [user]);
 
-  const loadStats = async () => {
+  const loadDashboardData = async () => {
     if (!user?.id) return;
 
     try {
-      const data = await getMyTickets(user.id);
+      setLoading(true);
+      
+      // Cargar datos en paralelo
+      const [profileData, saldoData, historialData] = await Promise.all([
+        getUserProfile(),
+        getSaldo(),
+        getHistorial(50, 1)
+      ]);
+
+      // Actualizar perfil
+      setUserProfile(profileData);
+
+      // Actualizar saldo
+      setSaldo(saldoData.saldo || 0);
+      
+      // Calcular estadísticas
+      const income = historialData.transacciones
+        .filter(t => t.tipo === 'Recarga')
+        .reduce((sum, t) => sum + parseFloat(t.monto), 0);
+      
+      const expense = historialData.transacciones
+        .filter(t => t.tipo === 'Pago' || t.tipo === 'Compra de ticket')
+        .reduce((sum, t) => sum + Math.abs(parseFloat(t.monto)), 0);
+
       setStats({
-        totalPurchases: data.total,
-        totalSpent: data.totalSpent,
-        activePurchases: data.activePurchases,
-        purchases: data.purchases,
+        totalTransactions: historialData.total,
+        totalIncome: income,
+        totalExpense: expense,
+        transactions: historialData.transacciones,
       });
     } catch (err) {
-      console.error("Error loading stats:", err);
+      console.error("Error loading dashboard data:", err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadDashboardData();
+    setRefreshing(false);
   };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("es-HN", {
       style: "currency",
       currency: "HNL",
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 2,
     }).format(amount);
+  };
+
+  const getTransactionIcon = (tipo) => {
+    switch (tipo) {
+      case 'Recarga':
+        return <ArrowUpCircle className="w-5 h-5 text-green-400" />;
+      case 'Pago':
+      case 'Compra de ticket':
+        return <ArrowDownCircle className="w-5 h-5 text-red-400" />;
+      default:
+        return <TrendingUp className="w-5 h-5 text-blue-400" />;
+    }
+  };
+
+  const getTransactionColor = (tipo) => {
+    switch (tipo) {
+      case 'Recarga':
+        return 'text-green-400';
+      case 'Pago':
+      case 'Compra de ticket':
+        return 'text-red-400';
+      default:
+        return 'text-blue-400';
+    }
   };
 
   return (
     <div className="min-h-screen bg-zinc-950 pt-20 px-6 pb-12">
       <div className="container mx-auto max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Dashboard</h1>
-          <p className="text-zinc-400">Bienvenido de nuevo, {user?.firstName}</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Dashboard</h1>
+            <p className="text-zinc-400">
+              Bienvenido de nuevo, {userProfile?.primerNombre || user?.firstName || 'Usuario'}
+            </p>
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Actualizar
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                <ShoppingCart className="w-6 h-6 text-blue-400" />
+              </div>
+              <Badge variant="default">Balance</Badge>
+            </div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : formatCurrency(saldo)}</div>
+            <div className="text-sm text-zinc-500">Saldo disponible</div>
+          </Card>
+
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
-                <Ticket className="w-6 h-6 text-amber-400" />
+                <TrendingUp className="w-6 h-6 text-amber-400" />
               </div>
               <Badge variant="default">Total</Badge>
             </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : stats.activePurchases}</div>
-            <div className="text-sm text-zinc-500">Boletos activos</div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : stats.totalTransactions}</div>
+            <div className="text-sm text-zinc-500">Transacciones</div>
           </Card>
 
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 flex items-center justify-center">
-                <Award className="w-6 h-6 text-green-400" />
+                <ArrowUpCircle className="w-6 h-6 text-green-400" />
               </div>
-              <Badge variant="default">Premios</Badge>
+              <Badge variant="default">Ingresos</Badge>
             </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">{formatCurrency(0)}</div>
-            <div className="text-sm text-zinc-500">Ganado</div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : formatCurrency(stats.totalIncome)}</div>
+            <div className="text-sm text-zinc-500">Recargado</div>
           </Card>
 
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                <ShoppingCart className="w-6 h-6 text-blue-400" />
+              <div className="w-12 h-12 bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <ArrowDownCircle className="w-6 h-6 text-red-400" />
               </div>
-              <Badge variant="default">Inversión</Badge>
+              <Badge variant="default">Gastos</Badge>
             </div>
             <div className="text-3xl font-bold text-zinc-100 mb-1">
-              {loading ? "..." : formatCurrency(stats.totalSpent)}
+              {loading ? "..." : formatCurrency(stats.totalExpense)}
             </div>
             <div className="text-sm text-zinc-500">Gastado</div>
-          </Card>
-
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-purple-400" />
-              </div>
-              <Badge variant="default">Total</Badge>
-            </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : stats.totalPurchases}</div>
-            <div className="text-sm text-zinc-500">Participaciones</div>
           </Card>
         </div>
 
@@ -111,7 +182,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-zinc-100">
-                    {user?.firstName} {user?.lastName}
+                    {userProfile?.primerNombre || user?.firstName} {userProfile?.primerApellido || user?.lastName}
                   </h3>
                   <p className="text-sm text-zinc-500">Usuario activo</p>
                 </div>
@@ -122,7 +193,15 @@ export default function Dashboard() {
                   <Mail className="w-5 h-5 text-zinc-500 mt-0.5" />
                   <div>
                     <p className="text-xs text-zinc-500 mb-1">Email</p>
-                    <p className="text-sm text-zinc-300 break-all">{user?.email}</p>
+                    <p className="text-sm text-zinc-300 break-all">{userProfile?.useremail || user?.email}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <ShoppingCart className="w-5 h-5 text-zinc-500 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-zinc-500 mb-1">Saldo actual</p>
+                    <p className="text-lg font-bold text-amber-400">{formatCurrency(saldo)}</p>
                   </div>
                 </div>
 
@@ -131,7 +210,11 @@ export default function Dashboard() {
                   <div>
                     <p className="text-xs text-zinc-500 mb-1">Miembro desde</p>
                     <p className="text-sm text-zinc-300">
-                      {new Date().toLocaleDateString("es-HN", {
+                      {userProfile?.userfching ? new Date(userProfile.userfching).toLocaleDateString("es-HN", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }) : new Date().toLocaleDateString("es-HN", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
@@ -179,81 +262,97 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-zinc-100 mb-4">Actividad reciente</h3>
               {loading ? (
                 <Spinner center />
-              ) : stats.purchases.length > 0 ? (
+              ) : stats.transactions.length > 0 ? (
                 <div className="space-y-3">
-                  {stats.purchases.slice(0, 5).map((purchase) => (
+                  {stats.transactions.slice(0, 10).map((transaction) => (
                     <div
-                      key={purchase.id}
+                      key={transaction.id}
                       className="flex items-center justify-between p-3 bg-zinc-950 border border-zinc-800"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
-                          <Ticket className="w-5 h-5 text-amber-400" />
+                        <div className="w-10 h-10 bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+                          {getTransactionIcon(transaction.tipo)}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-zinc-100">{purchase.lotteryName}</p>
+                          <p className="text-sm font-medium text-zinc-100">{transaction.tipo}</p>
                           <p className="text-xs text-zinc-500">
-                            {new Date(purchase.purchaseDate).toLocaleDateString("es-HN")}
+                            {new Date(transaction.creada).toLocaleString("es-HN", {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-semibold text-zinc-100">{formatCurrency(purchase.price)}</p>
-                        <p className="text-xs text-zinc-500">{purchase.numbers.join("-")}</p>
+                        <p className={`text-sm font-semibold ${getTransactionColor(transaction.tipo)}`}>
+                          {transaction.tipo === 'Recarga' ? '+' : '-'}{formatCurrency(Math.abs(transaction.monto))}
+                        </p>
+                        <p className="text-xs text-zinc-500 capitalize">{transaction.estado}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Ticket className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+                  <TrendingUp className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
                   <p className="text-zinc-500 mb-2">No hay actividad reciente</p>
-                  <p className="text-sm text-zinc-600">Compra tu primer boleto para comenzar</p>
+                  <p className="text-sm text-zinc-600">Tus transacciones aparecerán aquí</p>
                 </div>
               )}
             </Card>
 
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-zinc-100">Boletos activos</h3>
-                <Badge variant="default">{loading ? "..." : `${stats.activePurchases} boletos`}</Badge>
+                <h3 className="text-lg font-semibold text-zinc-100">Resumen del mes</h3>
+                <Badge variant="default">{new Date().toLocaleDateString('es-HN', { month: 'long', year: 'numeric' })}</Badge>
               </div>
               {loading ? (
                 <Spinner center />
-              ) : stats.activePurchases > 0 ? (
-                <div className="space-y-3">
-                  {stats.purchases
-                    .filter((p) => p.status === "pending")
-                    .slice(0, 3)
-                    .map((purchase) => (
-                      <div key={purchase.id} className="p-4 bg-zinc-950 border border-zinc-800">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="text-sm font-semibold text-zinc-100">{purchase.lotteryName}</h4>
-                          <Badge variant="warning">Pendiente</Badge>
-                        </div>
-                        <p className="text-xs text-zinc-500 mb-2">Ticket: {purchase.ticketNumber}</p>
-                        <div className="flex gap-1">
-                          {purchase.numbers.map((num, idx) => (
-                            <div
-                              key={idx}
-                              className="w-8 h-8 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-xs font-bold text-amber-400"
-                            >
-                              {num}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                </div>
               ) : (
-                <div className="text-center py-12">
-                  <Award className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-                  <p className="text-zinc-500 mb-2">No tienes boletos activos</p>
-                  <Link to="/sorteos">
-                    <Button variant="primary" size="md" className="mt-4">
-                      Comprar
-                    </Button>
-                  </Link>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-zinc-950 border border-zinc-800">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                        <ArrowUpCircle className="w-5 h-5 text-green-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-zinc-100">Total recargado</p>
+                        <p className="text-xs text-zinc-500">Ingresos</p>
+                      </div>
+                    </div>
+                    <p className="text-lg font-bold text-green-400">+{formatCurrency(stats.totalIncome)}</p>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-zinc-950 border border-zinc-800">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                        <ArrowDownCircle className="w-5 h-5 text-red-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-zinc-100">Total gastado</p>
+                        <p className="text-xs text-zinc-500">Compras y pagos</p>
+                      </div>
+                    </div>
+                    <p className="text-lg font-bold text-red-400">-{formatCurrency(stats.totalExpense)}</p>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-amber-400/5 border border-amber-400/20">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-amber-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-zinc-100">Balance neto</p>
+                        <p className="text-xs text-zinc-500">Diferencia</p>
+                      </div>
+                    </div>
+                    <p className="text-lg font-bold text-amber-400">
+                      {formatCurrency(stats.totalIncome - stats.totalExpense)}
+                    </p>
+                  </div>
                 </div>
               )}
             </Card>
