@@ -1,6 +1,6 @@
 import { Ticket, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { loginUser } from "../services/authService";
 import { AuthContext } from "../context/AuthContext";
 
@@ -11,6 +11,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { login } = useContext(AuthContext);
+
+  useEffect(() => {
+    document.title = "Iniciar Sesión - Lotería";
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

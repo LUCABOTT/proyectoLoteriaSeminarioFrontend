@@ -57,6 +57,8 @@ export default function Home() {
   const [lotteryData, setLotteryData] = useState(null);
 
   useEffect(() => {
+    document.title = "Inicio - Lotería";
+    
     const newParticles = Array.from({ length: 15 }, (_, i) => ({
       id: i,
       left: Math.random() * 100,

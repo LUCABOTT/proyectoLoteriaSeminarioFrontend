@@ -90,14 +90,14 @@ export function Navbar() {
                       className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
                     >
                       <User className="w-4 h-4" />
-                      Mi Perfil
+                      Mi perfil
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors text-left"
                     >
                       <LogOut className="w-4 h-4" />
-                      Cerrar Sesión
+                      Cerrar sesión
                     </button>
                   </div>
                 )}
@@ -156,14 +156,14 @@ export function Navbar() {
                       className="px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 text-sm font-medium transition-colors flex items-center gap-2"
                     >
                       <User className="w-4 h-4" />
-                      Mi Perfil
+                      Mi perfil
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 text-sm font-medium transition-colors text-left flex items-center gap-2"
                     >
                       <LogOut className="w-4 h-4" />
-                      Cerrar Sesión
+                      Cerrar sesión
                     </button>
                   </>
                 ) : (

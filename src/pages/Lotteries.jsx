@@ -13,6 +13,8 @@ const CountdownTimer = ({ targetDate }) => {
   });
 
   useEffect(() => {
+    document.title = "Sorteos - Lotería";
+
     const calculateTimeLeft = () => {
       if (!targetDate) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
       const difference = new Date(targetDate).getTime() - new Date().getTime();
@@ -39,28 +41,20 @@ const CountdownTimer = ({ targetDate }) => {
     <div className="flex gap-2">
       {timeLeft.days > 0 && (
         <div className="flex flex-col items-center bg-zinc-800 px-3 py-2 rounded">
-          <div className="text-xl font-bold text-amber-400">
-            {String(timeLeft.days).padStart(2, "0")}
-          </div>
+          <div className="text-xl font-bold text-amber-400">{String(timeLeft.days).padStart(2, "0")}</div>
           <div className="text-xs text-zinc-400">Días</div>
         </div>
       )}
       <div className="flex flex-col items-center bg-zinc-800 px-3 py-2 rounded">
-        <div className="text-xl font-bold text-amber-400">
-          {String(timeLeft.hours).padStart(2, "0")}
-        </div>
+        <div className="text-xl font-bold text-amber-400">{String(timeLeft.hours).padStart(2, "0")}</div>
         <div className="text-xs text-zinc-400">Hrs</div>
       </div>
       <div className="flex flex-col items-center bg-zinc-800 px-3 py-2 rounded">
-        <div className="text-xl font-bold text-amber-400">
-          {String(timeLeft.minutes).padStart(2, "0")}
-        </div>
+        <div className="text-xl font-bold text-amber-400">{String(timeLeft.minutes).padStart(2, "0")}</div>
         <div className="text-xs text-zinc-400">Min</div>
       </div>
       <div className="flex flex-col items-center bg-zinc-800 px-3 py-2 rounded">
-        <div className="text-xl font-bold text-amber-400">
-          {String(timeLeft.seconds).padStart(2, "0")}
-        </div>
+        <div className="text-xl font-bold text-amber-400">{String(timeLeft.seconds).padStart(2, "0")}</div>
         <div className="text-xs text-zinc-400">Seg</div>
       </div>
     </div>
@@ -69,10 +63,10 @@ const CountdownTimer = ({ targetDate }) => {
 
 const LotteryCard = ({ lottery, onSelectLottery }) => {
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('es-HN', {
-      style: 'currency',
-      currency: 'HNL',
-      minimumFractionDigits: 0
+    return new Intl.NumberFormat("es-HN", {
+      style: "currency",
+      currency: "HNL",
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -90,9 +84,7 @@ const LotteryCard = ({ lottery, onSelectLottery }) => {
 
       <div className="mb-4">
         <div className="text-sm text-zinc-400 mb-1">Premio Mayor</div>
-        <div className="text-3xl font-bold text-amber-400">
-          {formatCurrency(lottery.prize)}
-        </div>
+        <div className="text-3xl font-bold text-amber-400">{formatCurrency(lottery.prize)}</div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-zinc-800">
@@ -112,9 +104,7 @@ const LotteryCard = ({ lottery, onSelectLottery }) => {
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="text-sm text-zinc-400">
-          Desde {formatCurrency(lottery.ticketPrice)}
-        </div>
+        <div className="text-sm text-zinc-400">Desde {formatCurrency(lottery.ticketPrice)}</div>
         <button
           onClick={() => onSelectLottery(lottery)}
           className="px-6 py-2 bg-amber-400 text-zinc-950 text-sm font-medium hover:bg-amber-300 transition-colors"
@@ -159,7 +149,7 @@ export default function Lotteries() {
     setPurchasedTicket(ticket);
     setSelectedLottery(null);
     setShowSuccess(true);
-    
+
     setTimeout(() => {
       setShowSuccess(false);
       setPurchasedTicket(null);
@@ -181,19 +171,11 @@ export default function Lotteries() {
       <div className="min-h-screen bg-zinc-950 pt-20 px-6 pb-12">
         <div className="container mx-auto max-w-6xl">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-zinc-100 mb-2">
-              Sorteos Disponibles
-            </h1>
-            <p className="text-zinc-400">
-              Bienvenido, {user?.firstName}. Selecciona un sorteo y prueba tu suerte
-            </p>
+            <h1 className="text-4xl font-bold text-zinc-100 mb-2">Sorteos</h1>
+            <p className="text-zinc-400">Bienvenido, {user?.firstName}. Selecciona un sorteo y prueba tu suerte</p>
           </div>
 
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 mb-6">
-              {error}
-            </div>
-          )}
+          {error && <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 mb-6">{error}</div>}
 
           {showSuccess && purchasedTicket && (
             <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 mb-6">
@@ -201,19 +183,13 @@ export default function Lotteries() {
               <p className="text-sm">
                 Número de ticket: <span className="font-mono font-bold">{purchasedTicket.ticketNumber}</span>
               </p>
-              <p className="text-sm">
-                Números: {purchasedTicket.numbers.join(" - ")}
-              </p>
+              <p className="text-sm">Números: {purchasedTicket.numbers.join(" - ")}</p>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {lotteries.map((lottery) => (
-              <LotteryCard
-                key={lottery.id}
-                lottery={lottery}
-                onSelectLottery={handleSelectLottery}
-              />
+              <LotteryCard key={lottery.id} lottery={lottery} onSelectLottery={handleSelectLottery} />
             ))}
           </div>
 

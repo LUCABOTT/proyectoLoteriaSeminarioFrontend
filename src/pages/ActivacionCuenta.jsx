@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { activateAccount } from "../services/authService";
 import { CheckCircle, Mail, Lock } from "lucide-react";
+import { useEffect } from "react";
 
 export default function ActivacionCuenta() {
   const navigate = useNavigate();
@@ -9,6 +10,10 @@ export default function ActivacionCuenta() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = "Activar Cuenta - Lotería";
+  }, []);
 
   const handleConfirm = async (e) => {
     e.preventDefault();

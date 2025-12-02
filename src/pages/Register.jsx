@@ -1,6 +1,6 @@
 import { Ticket, Eye, EyeOff, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { registerUser } from "../services/authService";
 
 export default function RegisterPage() {
@@ -9,6 +9,10 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    document.title = "Registrarse - Lotería";
+  }, []);
 
   const [formData, setFormData] = useState({
     firstName: "",

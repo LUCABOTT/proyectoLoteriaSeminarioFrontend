@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Lotteries from "./pages/Lotteries";
+import NotFound from "./pages/NotFound";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { useContext } from "react";
@@ -46,6 +47,9 @@ function AppContent() {
             </PrivateRoute>
           }
         />
+
+        {/* 404 - Catch all unmatched routes */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {!hideNavbarAndFooter && <Footer />}
     </>
