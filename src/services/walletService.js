@@ -54,7 +54,14 @@ export const crearOrdenPayPal = async (monto) => {
     const res = await apiClient.post("/api/billetera/paypal/crear", {
       monto
     });
-    return res.data;
+    
+    // Normalizar la respuesta (el backend puede enviar urlAprobacion o approveUrl)
+    const approveUrl = res.data.urlAprobacion || res.data.approveUrl;
+    
+    return {
+      ...res.data,
+      approveUrl
+    };
   } catch (err) {
     throw new Error(err.response?.data?.error || "Error al crear orden PayPal");
   }

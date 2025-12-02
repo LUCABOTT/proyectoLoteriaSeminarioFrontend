@@ -1,11 +1,23 @@
 import { useState, useEffect, useContext } from "react";
-import { Wallet, Plus, History, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import {
+  Wallet,
+  Plus,
+  History,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
-import { getSaldo, getHistorial, recargarSaldo } from "../services/walletService";
+import { getSaldo, getHistorial, crearOrdenPayPal } from "../services/walletService";
 import { Card, Button, Alert, Input, Spinner } from "../components/ui";
+import { useSearchParams } from "react-router-dom";
 
 export default function WalletPage() {
   const { user } = useContext(AuthContext);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [saldo, setSaldo] = useState(0);
   const [historial, setHistorial] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +29,40 @@ export default function WalletPage() {
   useEffect(() => {
     document.title = "Billetera - Lotería";
     loadWalletData();
+
+    // Verificar si hay parámetros de PayPal en la URL
+    checkPayPalCallback();
   }, []);
+
+  const checkPayPalCallback = () => {
+    const exito = searchParams.get("exito");
+    const cancelado = searchParams.get("cancelado");
+    const errorParam = searchParams.get("error");
+    const monto = searchParams.get("monto");
+
+    if (exito === "true") {
+      setSuccess(`¡Recarga exitosa! Se agregaron ${formatCurrency(parseFloat(monto || 0))} a tu billetera.`);
+      // Recargar datos de la billetera para mostrar el nuevo saldo
+      loadWalletData();
+      // Limpiar parámetros de la URL después de 8 segundos
+      setTimeout(() => {
+        setSearchParams({});
+        setSuccess("");
+      }, 8000);
+    } else if (cancelado === "true") {
+      setError("Cancelaste la recarga. Intenta nuevamente cuando estés listo.");
+      setTimeout(() => {
+        setSearchParams({});
+        setError("");
+      }, 8000);
+    } else if (errorParam) {
+      setError(`Error en la recarga: ${decodeURIComponent(errorParam)}`);
+      setTimeout(() => {
+        setSearchParams({});
+        setError("");
+      }, 8000);
+    }
+  };
 
   const loadWalletData = async () => {
     try {
@@ -41,11 +86,11 @@ export default function WalletPage() {
     }
   };
 
-  const handleRecargar = async (e) => {
+  const handleRecargarPayPal = async (e) => {
     e.preventDefault();
-    
+
     const monto = parseFloat(montoRecarga);
-    
+
     if (!monto || monto <= 0) {
       setError("Ingresa un monto válido");
       return;
@@ -66,18 +111,16 @@ export default function WalletPage() {
     setSuccess("");
 
     try {
-      await recargarSaldo(monto);
-      setSuccess(`¡Recarga exitosa! Se agregaron ${formatCurrency(monto)} a tu billetera.`);
-      setMontoRecarga("");
-      
-      // Recargar datos
-      await loadWalletData();
+      const response = await crearOrdenPayPal(monto);
 
-      // Limpiar mensaje de éxito después de 5 segundos
-      setTimeout(() => setSuccess(""), 5000);
+      // Redirigir a PayPal para aprobar el pago
+      if (response.approveUrl) {
+        window.location.href = response.approveUrl;
+      } else {
+        throw new Error("No se pudo generar la URL de PayPal");
+      }
     } catch (err) {
       setError(err.message);
-    } finally {
       setLoadingRecarga(false);
     }
   };
@@ -86,7 +129,7 @@ export default function WalletPage() {
     return new Intl.NumberFormat("es-HN", {
       style: "currency",
       currency: "HNL",
-      minimumFractionDigits: 2
+      minimumFractionDigits: 2,
     }).format(amount);
   };
 
@@ -96,12 +139,12 @@ export default function WalletPage() {
       month: "short",
       day: "numeric",
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
     });
   };
 
   const getTransactionIcon = (tipo) => {
-    switch(tipo) {
+    switch (tipo) {
       case "Recarga":
       case "Acreditación":
         return <TrendingUp className="w-5 h-5 text-green-400" />;
@@ -115,7 +158,7 @@ export default function WalletPage() {
   };
 
   const getTransactionColor = (tipo) => {
-    switch(tipo) {
+    switch (tipo) {
       case "Recarga":
       case "Acreditación":
         return "text-green-400";
@@ -142,22 +185,32 @@ export default function WalletPage() {
     <div className="min-h-screen bg-zinc-950 pt-20 px-6 pb-12">
       <div className="container mx-auto max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Mi Billetera</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Billetera</h1>
           <p className="text-zinc-400">Administra tu saldo y transacciones</p>
         </div>
 
-        {error && <Alert variant="error" className="mb-6">{error}</Alert>}
-        {success && <Alert variant="success" className="mb-6">{success}</Alert>}
+        {error && (
+          <Alert variant="error" className="mb-6 flex items-center gap-3">
+            <XCircle className="w-5 h-5 shrink-0" />
+            <span>{error}</span>
+          </Alert>
+        )}
+        {success && (
+          <Alert variant="success" className="mb-6 flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 shrink-0" />
+            <span>{success}</span>
+          </Alert>
+        )}
 
         {/* Saldo actual */}
-        <Card className="p-8 mb-8 bg-gradient-to-br from-amber-400/10 to-amber-600/5 border-amber-400/20">
+        <Card className="p-8 mb-8 bg-linear-to-br from-amber-400/10 to-amber-600/5 border-amber-400/20">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-amber-400/20 border border-amber-400/30 flex items-center justify-center">
                 <Wallet className="w-6 h-6 text-amber-400" />
               </div>
               <div>
-                <p className="text-sm text-zinc-400">Saldo Disponible</p>
+                <p className="text-sm text-zinc-400">Saldo disponible</p>
                 <p className="text-4xl font-bold text-amber-400">{formatCurrency(saldo)}</p>
               </div>
             </div>
@@ -173,14 +226,12 @@ export default function WalletPage() {
             <div className="w-10 h-10 bg-green-500/10 border border-green-500/20 flex items-center justify-center">
               <Plus className="w-5 h-5 text-green-400" />
             </div>
-            <h2 className="text-xl font-bold text-zinc-100">Recargar Saldo</h2>
+            <h2 className="text-xl font-bold text-zinc-100">Recargar</h2>
           </div>
 
-          <form onSubmit={handleRecargar} className="space-y-4">
+          <form onSubmit={handleRecargarPayPal} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">
-                Monto a recargar (HNL)
-              </label>
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Monto a recargar</label>
               <Input
                 type="number"
                 placeholder="100.00"
@@ -191,12 +242,10 @@ export default function WalletPage() {
                 step="0.01"
                 disabled={loadingRecarga}
               />
-              <p className="text-xs text-zinc-500 mt-1">
-                Mínimo: L. 10 | Máximo: L. 10,000
-              </p>
+              <p className="text-xs text-zinc-500 mt-1">Mínimo: L. 10 | Máximo: L. 10,000</p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button
                 type="button"
                 variant="secondary"
@@ -238,17 +287,27 @@ export default function WalletPage() {
             <Button
               type="submit"
               variant="primary"
-              className="w-full"
+              className="w-full flex items-center justify-center gap-2"
               isLoading={loadingRecarga}
               disabled={loadingRecarga || !montoRecarga}
             >
-              {loadingRecarga ? "Procesando..." : "Recargar Ahora"}
+              {loadingRecarga ? (
+                "Redirigiendo a PayPal..."
+              ) : (
+                <>
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.805.805 0 01-.794.68H7.72a.483.483 0 01-.477-.558L7.418 21h1.518l.95-6.02h1.385c4.678 0 7.75-2.203 8.796-6.502zm-2.96-5.09c.762.868.983 1.81.752 3.285-.019.123-.04.24-.062.36-.735 3.773-3.089 5.446-6.956 5.446H8.957c-.63 0-1.174.414-1.354 1.002l-.014-.002-.93 5.894H3.121a.051.051 0 01-.05-.06l2.598-16.49A.95.95 0 016.607 2h5.976c2.183 0 3.716.469 4.524 1.388z" />
+                  </svg>
+                  Recargar con PayPal
+                </>
+              )}
             </Button>
           </form>
 
           <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded">
             <p className="text-xs text-blue-300">
-              ℹ️ Esta es una recarga manual para desarrollo. En producción se integraría con PayPal u otro procesador de pagos.
+              💳 Serás redirigido a PayPal para completar el pago de forma segura. Los fondos se acreditarán
+              automáticamente a tu billetera.
             </p>
           </div>
         </Card>
@@ -275,9 +334,7 @@ export default function WalletPage() {
                     </div>
                     <div>
                       <p className="font-medium text-zinc-100">{transaccion.tipo}</p>
-                      <p className="text-xs text-zinc-500">
-                        {formatDate(transaccion.fecha || transaccion.createdAt)}
-                      </p>
+                      <p className="text-xs text-zinc-500">{formatDate(transaccion.fecha || transaccion.createdAt)}</p>
                     </div>
                   </div>
                   <div className="text-right">
