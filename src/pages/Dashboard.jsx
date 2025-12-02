@@ -65,7 +65,7 @@ export default function Dashboard() {
               <Badge variant="default">Total</Badge>
             </div>
             <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : stats.activePurchases}</div>
-            <div className="text-sm text-zinc-500">Tickets activos</div>
+            <div className="text-sm text-zinc-500">Boletos activos</div>
           </Card>
 
           <Card className="p-6">
