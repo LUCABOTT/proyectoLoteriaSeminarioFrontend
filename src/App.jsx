@@ -4,6 +4,16 @@ import GuestRoute from "./components/GuestRoute";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import ActivacionCuenta from "./pages/ActivacionCuenta";
 import Dashboard from "./pages/Dashboard";
+import RolesList from "./pages/roles/RolesList";
+import RolesCreate from "./pages/roles/RolesCreate";
+import RolesEdit from "./pages/roles/RolesEdit";
+import RolesDelete from "./pages/roles/RolesDelete";
+import RolesUsuariosList from "./pages/rolesusuarios/RolesUsuariosList";
+import FuncionesList from "./pages/FuncionesList";
+import FuncionesRolesList from "./pages/FuncionesRolesList";
+import UsuariosList from "./pages/UsuariosList";
+import GoogleCallback from "./pages/GoogleCallback";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -82,6 +92,80 @@ function AppContent() {
             </PrivateRoute>
           }
         />
+
+        <Route
+  path="/roles"
+  element={
+    <PrivateRoute>
+      <RolesList />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/roles/crear"
+  element={
+    <PrivateRoute>
+      <RolesCreate />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/roles/editar/:id"
+  element={
+    <PrivateRoute>
+      <RolesEdit />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/roles/eliminar/:id"
+  element={
+    <PrivateRoute>
+      <RolesDelete />
+    </PrivateRoute>
+  }
+/>
+
+   <Route
+  path="/roles-usuarios"
+  element={
+    <PrivateRoute>
+      <RolesUsuariosList />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/funciones"
+  element={
+    <PrivateRoute>
+      <FuncionesList />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/funciones-roles"
+  element={
+    <PrivateRoute>
+      <FuncionesRolesList />
+    </PrivateRoute>
+  }
+/>
+
+
+<Route
+  path="/usuarios"
+  element={
+    <PrivateRoute>
+      <UsuariosList />
+    </PrivateRoute>
+  }
+/>
+<Route path="/google/callback" element={<GoogleCallback />} />
+
 
         <Route path="*" element={<NotFound />} />
       </Routes>

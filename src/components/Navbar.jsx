@@ -1,5 +1,5 @@
 import { Menu, Ticket, X, User, LogOut, Wallet } from "lucide-react";
-import { Link } from "react-router-dom";
+import { href, Link } from "react-router-dom";
 import { useState, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 
@@ -14,6 +14,11 @@ const privateNavLinks = [
   { label: "Sorteos", href: "/sorteos" },
   { label: "Billetera", href: "/billetera" },
   { label: "Mis boletos", href: "/dashboard" },
+  { label: "Roles", href: "/roles" },
+ { label: "Roles_Usuarios", href: "/roles-usuarios" },
+ {label: "Funciones", href: "/funciones"},
+ {label: "Funciones_Roles", href: "/funciones-roles"},
+ {label: "Usuarios", href: "/usuarios"},
 ];
 
 export function Navbar() {

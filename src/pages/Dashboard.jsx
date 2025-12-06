@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { getHistorial, getSaldo } from "../services/walletService";
 import { getUserProfile } from "../services/authService";
 import { Card, CardBody, Button, Badge, Spinner } from "../components/ui";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Dashboard() {
   const { user, logout } = useContext(AuthContext);
@@ -19,10 +21,18 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  const navigate = useNavigate();
+
+  // 👇 ESTE ES EL USE EFFECT NUEVO
   useEffect(() => {
-    document.title = "Dashboard - Lotería";
-    loadDashboardData();
-  }, [user]);
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      localStorage.setItem("token", token);
+      navigate("/dashboard", { replace: true });
+    }
+  }, []);
 
   const loadDashboardData = async () => {
     if (!user?.id) return;
