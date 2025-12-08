@@ -237,15 +237,24 @@ export default function WalletPage() {
                 placeholder="100.00"
                 value={montoRecarga}
                 onChange={(e) => setMontoRecarga(e.target.value)}
-                min="10"
-                max="10000"
+                min="25"
+                max="1000"
                 step="0.01"
                 disabled={loadingRecarga}
               />
-              <p className="text-xs text-zinc-500 mt-1">Mínimo: L. 10 | Máximo: L. 10,000</p>
+              <p className="text-xs text-zinc-500 mt-1">Mínimo: L. 25 | Máximo: L. 1,000</p>
             </div>
 
             <div className="flex gap-2 flex-wrap">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => setMontoRecarga("25")}
+                disabled={loadingRecarga}
+              >
+                + L. 25
+              </Button>
               <Button
                 type="button"
                 variant="secondary"
@@ -268,19 +277,10 @@ export default function WalletPage() {
                 type="button"
                 variant="secondary"
                 size="sm"
-                onClick={() => setMontoRecarga("500")}
+                onClick={() => setMontoRecarga("200")}
                 disabled={loadingRecarga}
               >
-                + L. 500
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => setMontoRecarga("1000")}
-                disabled={loadingRecarga}
-              >
-                + L. 1,000
+                + L. 200
               </Button>
             </div>
 
@@ -303,13 +303,6 @@ export default function WalletPage() {
               )}
             </Button>
           </form>
-
-          <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded">
-            <p className="text-xs text-blue-300">
-              💳 Serás redirigido a PayPal para completar el pago de forma segura. Los fondos se acreditarán
-              automáticamente a tu billetera.
-            </p>
-          </div>
         </Card>
 
         {/* Historial de transacciones */}

@@ -1,6 +1,20 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { Ticket, User, Mail, Calendar, TrendingUp, Award, ShoppingCart, Clock, ArrowUpCircle, ArrowDownCircle, RefreshCw, Users, DollarSign } from "lucide-react";
+import {
+  Ticket,
+  User,
+  Mail,
+  Calendar,
+  TrendingUp,
+  Award,
+  ShoppingCart,
+  Clock,
+  ArrowUpCircle,
+  ArrowDownCircle,
+  RefreshCw,
+  Users,
+  DollarSign,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { getHistorial, getSaldo } from "../services/walletService";
 import { getUserProfile } from "../services/authService";
@@ -8,11 +22,10 @@ import dashboardService from "../services/dashboardService";
 import { Card, CardBody, Button, Badge, Spinner } from "../components/ui";
 import { useNavigate } from "react-router-dom";
 
-
 export default function Dashboard() {
   const { user, logout } = useContext(AuthContext);
   const userRoles = user?.roles || [];
-  const isAdmin = userRoles.includes('ADM');
+  const isAdmin = userRoles.includes("ADM");
 
   if (isAdmin) {
     return <AdminDashboard />;
@@ -31,7 +44,7 @@ function AdminDashboard() {
     ticketsVendidos: 0,
     usuariosRegistrados: 0,
     ventasTotales: 0,
-    actividadReciente: []
+    actividadReciente: [],
   });
 
   useEffect(() => {
@@ -41,10 +54,7 @@ function AdminDashboard() {
   const loadAdminData = async () => {
     try {
       setLoading(true);
-      const [profileData, statsData] = await Promise.all([
-        getUserProfile(),
-        dashboardService.getAdminStats()
-      ]);
+      const [profileData, statsData] = await Promise.all([getUserProfile(), dashboardService.getAdminStats()]);
       setUserProfile(profileData);
       setStats(statsData);
     } catch (err) {
@@ -75,7 +85,7 @@ function AdminDashboard() {
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Panel de Administración</h1>
             <p className="text-zinc-400">
-              Bienvenido, {userProfile?.primerNombre || user?.firstName || 'Administrador'}
+              Bienvenido, {userProfile?.primerNombre || user?.firstName || "Administrador"}
             </p>
           </div>
           <Button
@@ -85,7 +95,7 @@ function AdminDashboard() {
             disabled={refreshing}
             className="flex items-center gap-2"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             Actualizar
           </Button>
         </div>
@@ -131,7 +141,9 @@ function AdminDashboard() {
               </div>
               <Badge variant="default">Ingresos</Badge>
             </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : formatCurrency(stats.ventasTotales)}</div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">
+              {loading ? "..." : formatCurrency(stats.ventasTotales)}
+            </div>
             <div className="text-sm text-zinc-500">Ventas totales</div>
           </Card>
         </div>
@@ -165,15 +177,17 @@ function AdminDashboard() {
                   <div>
                     <p className="text-xs text-zinc-500 mb-1">Miembro desde</p>
                     <p className="text-sm text-zinc-300">
-                      {userProfile?.userfching ? new Date(userProfile.userfching).toLocaleDateString("es-HN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }) : new Date().toLocaleDateString("es-HN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                      {userProfile?.userfching
+                        ? new Date(userProfile.userfching).toLocaleDateString("es-HN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : new Date().toLocaleDateString("es-HN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
                     </p>
                   </div>
                 </div>
@@ -233,7 +247,8 @@ function AdminDashboard() {
                             {ticket.usuario?.primerNombre} {ticket.usuario?.primerApellido}
                           </p>
                           <p className="text-xs text-zinc-500">
-                            {ticket.sorteo?.juego?.Nombre || 'Sorteo'} - {new Date(ticket.FechaCompra).toLocaleDateString("es-HN")}
+                            {ticket.sorteo?.juego?.Nombre || "Sorteo"} -{" "}
+                            {new Date(ticket.FechaCompra).toLocaleDateString("es-HN")}
                           </p>
                         </div>
                       </div>
@@ -285,12 +300,12 @@ function JugadorDashboard() {
 
     try {
       setLoading(true);
-      
+
       // Cargar datos en paralelo
       const [profileData, saldoData, historialData] = await Promise.all([
         getUserProfile(),
         getSaldo(),
-        getHistorial(50, 1)
+        getHistorial(50, 1),
       ]);
 
       // Actualizar perfil
@@ -298,14 +313,14 @@ function JugadorDashboard() {
 
       // Actualizar saldo
       setSaldo(saldoData.saldo || 0);
-      
+
       // Calcular estadísticas
       const income = historialData.transacciones
-        .filter(t => t.tipo === 'Recarga')
+        .filter((t) => t.tipo === "Recarga")
         .reduce((sum, t) => sum + parseFloat(t.monto), 0);
-      
+
       const expense = historialData.transacciones
-        .filter(t => t.tipo === 'Pago' || t.tipo === 'Compra de ticket')
+        .filter((t) => t.tipo === "Pago" || t.tipo === "Compra de ticket")
         .reduce((sum, t) => sum + Math.abs(parseFloat(t.monto)), 0);
 
       setStats({
@@ -337,10 +352,10 @@ function JugadorDashboard() {
 
   const getTransactionIcon = (tipo) => {
     switch (tipo) {
-      case 'Recarga':
+      case "Recarga":
         return <ArrowUpCircle className="w-5 h-5 text-green-400" />;
-      case 'Pago':
-      case 'Compra de ticket':
+      case "Pago":
+      case "Compra de ticket":
         return <ArrowDownCircle className="w-5 h-5 text-red-400" />;
       default:
         return <TrendingUp className="w-5 h-5 text-blue-400" />;
@@ -349,13 +364,13 @@ function JugadorDashboard() {
 
   const getTransactionColor = (tipo) => {
     switch (tipo) {
-      case 'Recarga':
-        return 'text-green-400';
-      case 'Pago':
-      case 'Compra de ticket':
-        return 'text-red-400';
+      case "Recarga":
+        return "text-green-400";
+      case "Pago":
+      case "Compra de ticket":
+        return "text-red-400";
       default:
-        return 'text-blue-400';
+        return "text-blue-400";
     }
   };
 
@@ -366,7 +381,7 @@ function JugadorDashboard() {
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Dashboard</h1>
             <p className="text-zinc-400">
-              Bienvenido de nuevo, {userProfile?.primerNombre || user?.firstName || 'Usuario'}
+              Bienvenido de nuevo, {userProfile?.primerNombre || user?.firstName || "Usuario"}
             </p>
           </div>
           <Button
@@ -376,7 +391,7 @@ function JugadorDashboard() {
             disabled={refreshing}
             className="flex items-center gap-2"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             Actualizar
           </Button>
         </div>
@@ -411,7 +426,9 @@ function JugadorDashboard() {
               </div>
               <Badge variant="default">Ingresos</Badge>
             </div>
-            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : formatCurrency(stats.totalIncome)}</div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">
+              {loading ? "..." : formatCurrency(stats.totalIncome)}
+            </div>
             <div className="text-sm text-zinc-500">Recargado</div>
           </Card>
 
@@ -466,15 +483,17 @@ function JugadorDashboard() {
                   <div>
                     <p className="text-xs text-zinc-500 mb-1">Miembro desde</p>
                     <p className="text-sm text-zinc-300">
-                      {userProfile?.userfching ? new Date(userProfile.userfching).toLocaleDateString("es-HN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }) : new Date().toLocaleDateString("es-HN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                      {userProfile?.userfching
+                        ? new Date(userProfile.userfching).toLocaleDateString("es-HN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : new Date().toLocaleDateString("es-HN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
                     </p>
                   </div>
                 </div>
@@ -495,20 +514,13 @@ function JugadorDashboard() {
                   <Ticket className="w-5 h-5 text-amber-400" />
                   Ver sorteos disponibles
                 </Link>
-                <button
-                  disabled
-                  className="w-full flex items-center gap-3 px-4 py-3 bg-zinc-800/50 text-zinc-500 text-sm cursor-not-allowed"
+                <Link
+                  to="/mis-boletos"
+                  className="flex items-center gap-3 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-sm transition-colors"
                 >
-                  <Clock className="w-5 h-5" />
-                  Mis boletos
-                </button>
-                <button
-                  disabled
-                  className="w-full flex items-center gap-3 px-4 py-3 bg-zinc-800/50 text-zinc-500 text-sm cursor-not-allowed"
-                >
-                  <TrendingUp className="w-5 h-5" />
-                  Historial
-                </button>
+                  <Clock className="w-5 h-5 text-amber-400" />
+                  Ver mis boletos
+                </Link>
               </div>
             </Card>
           </div>
@@ -533,18 +545,19 @@ function JugadorDashboard() {
                           <p className="text-sm font-medium text-zinc-100">{transaction.tipo}</p>
                           <p className="text-xs text-zinc-500">
                             {new Date(transaction.creada).toLocaleString("es-HN", {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
                             })}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className={`text-sm font-semibold ${getTransactionColor(transaction.tipo)}`}>
-                          {transaction.tipo === 'Recarga' ? '+' : '-'}{formatCurrency(Math.abs(transaction.monto))}
+                          {transaction.tipo === "Recarga" ? "+" : "-"}
+                          {formatCurrency(Math.abs(transaction.monto))}
                         </p>
                         <p className="text-xs text-zinc-500 capitalize">{transaction.estado}</p>
                       </div>
@@ -563,7 +576,9 @@ function JugadorDashboard() {
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-zinc-100">Resumen del mes</h3>
-                <Badge variant="default">{new Date().toLocaleDateString('es-HN', { month: 'long', year: 'numeric' })}</Badge>
+                <Badge variant="default">
+                  {new Date().toLocaleDateString("es-HN", { month: "long", year: "numeric" })}
+                </Badge>
               </div>
               {loading ? (
                 <Spinner center />

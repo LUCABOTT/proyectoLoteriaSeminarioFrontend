@@ -14,7 +14,7 @@ const publicNavLinks = [
 const jugadorNavLinks = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Loterías", href: "/lotteries" },
-  { label: "Mis boletos", href: "/mis-boletos" },
+  { label: "Boletos", href: "/mis-boletos" },
   { label: "Billetera", href: "/wallet" },
 ];
 
