@@ -94,7 +94,7 @@ export default function MisTickets() {
             <CardBody className="text-center">
               <p className="text-gray-400 text-sm font-medium">Total Gastado</p>
               <p className="text-3xl font-bold text-blue-400">
-                {formatearMoneda(tickets.reduce((sum, t) => sum + (t.Total || 0), 0))}
+                {formatearMoneda(tickets.reduce((sum, t) => sum + parseFloat(t.Total || 0), 0))}
               </p>
             </CardBody>
           </Card>
@@ -150,7 +150,7 @@ export default function MisTickets() {
                           <span className="font-semibold text-gray-300">Fecha:</span> {formatearFecha(ticket.FechaCompra)}
                         </p>
                         <p className="text-yellow-400 font-bold text-lg">
-                          {formatearMoneda(ticket.Total)}
+                          {formatearMoneda(parseFloat(ticket.Total || 0))}
                         </p>
                       </div>
 

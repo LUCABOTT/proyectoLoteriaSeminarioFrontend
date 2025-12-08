@@ -169,7 +169,7 @@ export default function GestionarTickets() {
                         <td className="px-6 py-4 text-sm text-gray-300">{ticket.IdUsuario}</td>
                         <td className="px-6 py-4 text-sm text-gray-300">{juego?.Nombre || 'N/A'}</td>
                         <td className="px-6 py-4 text-sm text-gray-300">{formatearFecha(ticket.FechaCompra)}</td>
-                        <td className="px-6 py-4 text-sm font-bold text-yellow-400">{formatearMoneda(ticket.Total)}</td>
+                        <td className="px-6 py-4 text-sm font-bold text-yellow-400">{formatearMoneda(parseFloat(ticket.Total || 0))}</td>
                         <td className="px-6 py-4 text-sm">
                           {editandoEstado === ticket.IdTicket ? (
                             <select

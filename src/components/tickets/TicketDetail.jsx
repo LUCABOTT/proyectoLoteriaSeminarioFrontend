@@ -100,7 +100,7 @@ export const TicketDetail = ({ ticket, numeros, juego, sorteo, onClose }) => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Monto Pagado</p>
-                  <p className="text-gray-900 font-bold text-lg">{formatearMoneda(ticket.Total)}</p>
+                  <p className="text-gray-900 font-bold text-lg">{formatearMoneda(parseFloat(ticket.Total || 0))}</p>
                 </div>
               </div>
             </div>

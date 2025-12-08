@@ -334,7 +334,7 @@ export default function WalletPage() {
                     </div>
                     <div>
                       <p className="font-medium text-zinc-100">{transaccion.tipo}</p>
-                      <p className="text-xs text-zinc-500">{formatDate(transaccion.fecha || transaccion.createdAt)}</p>
+                      <p className="text-xs text-zinc-500">{formatDate(transaccion.creada)}</p>
                     </div>
                   </div>
                   <div className="text-right">

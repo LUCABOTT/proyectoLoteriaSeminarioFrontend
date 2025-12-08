@@ -105,7 +105,7 @@ export const buyTicket = async (userId, lotteryId, numbers) => {
       numbers,
       purchaseDate: ticket.FechaCompra,
       ticketNumber: `TK-${ticket.IdTicket}`,
-      price: ticket.Total,
+      price: parseFloat(ticket.Total || 0),
       drawDate: sorteo.Cierre,
       status: ticket.Estado
     }
@@ -141,7 +141,7 @@ export const getMyTickets = async (userId) => {
       numbers,
       purchaseDate: ticket.FechaCompra,
       ticketNumber: `TK-${ticket.IdTicket}`,
-      price: ticket.Total,
+      price: parseFloat(ticket.Total || 0),
       drawDate: sorteo?.Cierre,
       status: ticket.Estado
     };

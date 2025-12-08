@@ -239,7 +239,7 @@ function AdminDashboard() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-semibold text-green-400">
-                          {formatCurrency(ticket.Total)}
+                          {formatCurrency(parseFloat(ticket.Total || 0))}
                         </p>
                         <p className="text-xs text-zinc-500 capitalize">{ticket.Estado}</p>
                       </div>
