@@ -55,7 +55,7 @@ export const TicketDetail = ({ ticket, numeros, juego, sorteo, onClose }) => {
                 <Award className="text-white" size={32} />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-white drop-shadow-lg">Boleto #{ticket.IdTicket}</h2>
+                <h2 className="text-3xl font-bold text-white drop">Boleto #{ticket.IdTicket}</h2>
                 <p className="text-white/90 font-medium">{juego?.Nombre || "Desconocido"}</p>
               </div>
             </div>
@@ -92,7 +92,7 @@ export const TicketDetail = ({ ticket, numeros, juego, sorteo, onClose }) => {
                 {numeros.map((num, idx) => (
                   <div
                     key={idx}
-                    className={`flex items-center justify-center w-14 h-14 bg-gradient-to-br ${colors} text-white font-bold text-xl shadow-lg transform hover:scale-110 transition`}
+                    className={`flex items-center justify-center w-14 h-14 bg-amber-600 border border-amber-700 text-amber-100 text-xl font-bold`}
                   >
                     {num}
                   </div>
@@ -104,9 +104,9 @@ export const TicketDetail = ({ ticket, numeros, juego, sorteo, onClose }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               {/* Información de compra */}
               <Card className="p-4 bg-zinc-800 border-zinc-700">
-                <h5 className="text-sm font-bold text-zinc-400 mb-3 flex items-center gap-2">
+                <h5 className="text-sm font-bold text-zinc-400 mb-3 flex items-center gap-2 uppercase">
                   <Calendar className="w-4 h-4" />
-                  INFORMACIÓN DE COMPRA
+                  Información de compra
                 </h5>
                 <div className="space-y-3">
                   <div>
@@ -180,7 +180,7 @@ export const TicketDetail = ({ ticket, numeros, juego, sorteo, onClose }) => {
                   {sorteo.NumerosGanadores.map((num, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 text-white font-bold text-lg shadow-lg"
+                      className="flex items-center justify-center w-12 h-12 bg-green-600 border border-green-700 text-green-100 text-lg font-bold"
                     >
                       {num}
                     </div>
