@@ -54,7 +54,7 @@ export default function ImagenesUsuariosList({ usuarioId }) {
                   <td className="p-3">{img.id}</td>
                   <td className="p-3">{img.usuarioId}</td>
                   <td className="p-3">
-                    <img src={`http://localhost:3001/img/usuarios/${img.url}`} alt="avatar" className="h-10 w-10 rounded-full"/>
+                    <img src={`${import.meta.env.VITE_API_URL}/img/usuarios/${img.url}`} alt="avatar" className="h-10 w-10 rounded-full"/>
                   </td>
                   <td className="p-3 text-center flex justify-center gap-2">
                     <Button size="sm" variant="secondary" onClick={() => { setSelectedImage(img); setOpenEdit(true); }}>Editar</Button>

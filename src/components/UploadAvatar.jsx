@@ -22,7 +22,7 @@ export default function UploadAvatar() {
     formData.append("url", file); // Multer espera "file"
     formData.append("usuarioId", user.id); // asegúrate que user.id exista
 
-    const res = await fetch("http://localhost:3001/api/imagenesUsuarios/imagen", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/imagenesUsuarios/imagen`, {
       method: "POST",
       body: formData,
       
