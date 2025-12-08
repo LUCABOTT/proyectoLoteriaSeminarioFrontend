@@ -13,6 +13,10 @@ import FuncionesList from "./pages/FuncionesList";
 import FuncionesRolesList from "./pages/FuncionesRolesList";
 import UsuariosList from "./pages/UsuariosList";
 import GoogleCallback from "./pages/GoogleCallback";
+import UploadAvatar from "./components/UploadAvatar"
+import ImagenesUsuariosList from "./pages/ImagenesUsuariosList";
+import ReactivarCuentaPage from "./pages/ReactivarCuentaPage";
+import Restabecerontrasena from "./pages/OlvideContrasenaPage";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -164,7 +168,21 @@ function AppContent() {
     </PrivateRoute>
   }
 />
+
+<Route
+  path="/imagenes-usuarios"
+  element={
+    <PrivateRoute>
+      <ImagenesUsuariosList />
+    </PrivateRoute>
+  }
+/>
+
 <Route path="/google/callback" element={<GoogleCallback />} />
+
+<Route path="/subir-imagen" element={<UploadAvatar />} />
+<Route path="/reactivar-cuenta" element={<ReactivarCuentaPage />} />
+<Route path="/restablecer-contrasena" element={<Restabecerontrasena />} />
 
 
         <Route path="*" element={<NotFound />} />

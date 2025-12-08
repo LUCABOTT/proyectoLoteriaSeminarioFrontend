@@ -37,7 +37,7 @@ export default function RolesUsuariosList() {
     <div className="p-10 flex flex-col h-screen">
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-2xl font-bold text-white">Roles de Usuarios</h1>
-        <Button variant="primary"  onClick={() => setOpenCreate(true)}>+ Nuevo</Button>
+        <Button variant="primary" className="mt-10"  onClick={() => setOpenCreate(true)}>+ Nuevo</Button>
       </div>
 
       {loading ? (

@@ -19,6 +19,7 @@ const privateNavLinks = [
  {label: "Funciones", href: "/funciones"},
  {label: "Funciones_Roles", href: "/funciones-roles"},
  {label: "Usuarios", href: "/usuarios"},
+ {label: "Imagenes Usuarios", href: "/imagenes-usuarios"},
 ];
 
 export function Navbar() {
@@ -97,6 +98,14 @@ export function Navbar() {
                       <User className="w-4 h-4" />
                       Mi perfil
                     </Link>
+                     <Link
+                        to="/subir-imagen"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
+                      >
+                        <User className="w-4 h-4" />
+                        Subir foto
+                      </Link>
                     <Link
                       to="/billetera"
                       onClick={() => setShowUserMenu(false)}

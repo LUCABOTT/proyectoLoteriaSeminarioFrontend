@@ -39,7 +39,7 @@ export default function FuncionesRolesList() {
       {/* Encabezado con botón */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-white">Funciones por Rol</h1>
-        <Button variant="primary" onClick={() => setOpenCreate(true)}>
+        <Button variant="primary" className="mt-10" onClick={() => setOpenCreate(true)}>
           + Nueva Relación
         </Button>
       </div>

@@ -109,9 +109,12 @@ export default function LoginPage() {
             />
             <span className="text-sm text-zinc-400">Recordarme</span>
           </label>
-          <a href="#" className="text-sm text-amber-400 hover:text-amber-300 transition-colors">
+          <Link
+            to="/restablecer-contrasena"
+            className="text-sm text-amber-400 hover:text-amber-300 transition-colors"
+              >
             ¿Olvidaste tu contraseña?
-          </a>
+          </Link>
         </div>
 
         <Button
@@ -153,6 +156,12 @@ export default function LoginPage() {
         <Link to="/register" className="text-amber-400 hover:text-amber-300 transition-colors font-medium">
           Regístrate
         </Link>
+        <br />
+
+  ¿Tu cuenta está desactivada?{" "}
+  <Link to="/reactivar-cuenta" className="text-amber-400 hover:text-amber-300 transition-colors font-medium">
+    Reactivar cuenta
+  </Link>
       </p>
     </AuthLayout>
   );

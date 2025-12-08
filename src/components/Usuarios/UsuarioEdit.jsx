@@ -67,7 +67,7 @@ const handleTelefonosSave = async () => {
       idUsuario: usuario.id,      // id del usuario a editar
       telefonos: form.telefonos   // array de { numero }
     });
-    onSaved(); // refresca la tabla de usuarios
+    onSaved(); // refresca la tabla de usuariosa
     onClose(); // cierra modal
   } catch (err) {
     console.error(err);
@@ -79,104 +79,107 @@ const handleTelefonosSave = async () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-zinc-900 text-white rounded-xl shadow-lg p-6 w-full max-w-lg">
-        <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
-
-        {error && <p className="text-red-500 mb-2">{error}</p>}
-
-        <div className="flex flex-col gap-2">
-          <input name="primerNombre" placeholder="Primer Nombre"
-            value={form.primerNombre || ""} onChange={handleChange}
-            className="p-2 rounded bg-zinc-800" />
-
-          <input name="segundoNombre" placeholder="Segundo Nombre"
-            value={form.segundoNombre || ""} onChange={handleChange}
-            className="p-2 rounded bg-zinc-800" />
-
-          <input name="primerApellido" placeholder="Primer Apellido"
-            value={form.primerApellido || ""} onChange={handleChange}
-            className="p-2 rounded bg-zinc-800" />
-
-          <input name="segundoApellido" placeholder="Segundo Apellido"
-            value={form.segundoApellido || ""} onChange={handleChange}
-            className="p-2 rounded bg-zinc-800" />
-
-          <input name="identidad" placeholder="Identidad"
-            value={form.identidad || ""} onChange={handleChange}
-            className="p-2 rounded bg-zinc-800" />
-
-          <input name="useremail" placeholder="Email"
-            type="email" value={form.useremail || ""} onChange={handleChange}
-            className="p-2 rounded bg-zinc-800" />
-
-          <input name="userpswd" placeholder="Nueva Contraseña (opcional)"
-            type="password" value={form.userpswd || ""} onChange={handleChange}
-            className="p-2 rounded bg-zinc-800" />
-
-          {/* Teléfonos */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Teléfonos</label>
-
-            {form.telefonos.map((tel, i) => (
-              <div key={i} className="flex gap-2">
-                <input
-                  type="number"
-                  placeholder={`Teléfono #${i + 1}`}
-                  value={tel.numero}
-                  onChange={(e) => handleTelefonoChange(i, e.target.value)}
-                  className="p-2 rounded bg-zinc-800 flex-1"
-                />
-                {form.telefonos.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => eliminarTelefono(i)}
-                    className="px-3 bg-red-600 hover:bg-red-700 rounded"
-                  >
-                    –
-                  </button>
-                )}
-              </div>
-            ))}
-
-            <button
-              type="button"
-              onClick={agregarTelefono}
-              className="mt-1 text-sm text-amber-400 hover:text-amber-300"
-            >
-              + Agregar otro teléfono
-            </button>
-          </div>
-
-          <input name="fechaNacimiento" type="date"
-            value={form.fechaNacimiento ? form.fechaNacimiento.split("T")[0] : ""}
-            onChange={handleChange} className="p-2 rounded bg-zinc-800" />
-
-          <select name="usertipo" value={form.usertipo || "PBL"}
-            onChange={handleChange} className="p-2 rounded bg-zinc-800">
-            <option value="PBL">PBL</option>
-            <option value="ADM">ADM</option>
-            <option value="VND">VND</option>
-            <option value="AUD">AUD</option>
-          </select>
-
-          <select name="userest" value={form.userest || "AC"}
-            onChange={handleChange} className="p-2 rounded bg-zinc-800">
-            <option value="AC">AC</option>
-            <option value="IN">IN</option>
-            <option value="BL">BL</option>
-          </select>
-        </div>
-
-        <div className="flex justify-end gap-2 mt-4">
-          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button variant="primary" onClick={handleSubmit} disabled={loading}>
-            {loading ? "Guardando..." : "Guardar"}
-          </Button>
-          <Button variant="primary" onClick={handleTelefonosSave} disabled={loading}>
-  {loading ? "Guardando..." : "Guardar Teléfonos"}
-</Button>
-        </div>
-      </div>
+  <div className="bg-zinc-900 text-white rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] flex flex-col">
+    
+    {/* Header */}
+    <div className="p-6 border-b border-zinc-800">
+      <h2 className="text-xl font-bold">Editar Usuario</h2>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
+
+    {/* Contenido scrollable */}
+    <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-2">
+      <input name="primerNombre" placeholder="Primer Nombre"
+        value={form.primerNombre || ""} onChange={handleChange}
+        className="p-2 rounded bg-zinc-800" />
+
+      <input name="segundoNombre" placeholder="Segundo Nombre"
+        value={form.segundoNombre || ""} onChange={handleChange}
+        className="p-2 rounded bg-zinc-800" />
+
+      <input name="primerApellido" placeholder="Primer Apellido"
+        value={form.primerApellido || ""} onChange={handleChange}
+        className="p-2 rounded bg-zinc-800" />
+
+      <input name="segundoApellido" placeholder="Segundo Apellido"
+        value={form.segundoApellido || ""} onChange={handleChange}
+        className="p-2 rounded bg-zinc-800" />
+
+      <input name="identidad" placeholder="Identidad"
+        value={form.identidad || ""} onChange={handleChange}
+        className="p-2 rounded bg-zinc-800" />
+
+      <input name="useremail" placeholder="Email"
+        type="email" value={form.useremail || ""} onChange={handleChange}
+        className="p-2 rounded bg-zinc-800" />
+
+      <input name="userpswd" placeholder="Nueva Contraseña (opcional)"
+        type="password" value={form.userpswd || ""} onChange={handleChange}
+        className="p-2 rounded bg-zinc-800" />
+
+      {/* Teléfonos */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Teléfonos</label>
+        {form.telefonos.map((tel, i) => (
+          <div key={i} className="flex gap-2">
+            <input
+              type="number"
+              placeholder={`Teléfono #${i + 1}`}
+              value={tel.numero}
+              onChange={(e) => handleTelefonoChange(i, e.target.value)}
+              className="p-2 rounded bg-zinc-800 flex-1"
+            />
+            {form.telefonos.length > 1 && (
+              <button
+                type="button"
+                onClick={() => eliminarTelefono(i)}
+                className="px-3 bg-red-600 hover:bg-red-700 rounded"
+              >
+                –
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={agregarTelefono}
+          className="mt-1 text-sm text-amber-400 hover:text-amber-300"
+        >
+          + Agregar otro teléfono
+        </button>
+      </div>
+
+      <input name="fechaNacimiento" type="date"
+        value={form.fechaNacimiento ? form.fechaNacimiento.split("T")[0] : ""}
+        onChange={handleChange} className="p-2 rounded bg-zinc-800" />
+
+      <select name="usertipo" value={form.usertipo || "PBL"}
+        onChange={handleChange} className="p-2 rounded bg-zinc-800">
+        <option value="PBL">PBL</option>
+        <option value="ADM">ADM</option>
+        <option value="VND">VND</option>
+        <option value="AUD">AUD</option>
+      </select>
+
+      <select name="userest" value={form.userest || "AC"}
+        onChange={handleChange} className="p-2 rounded bg-zinc-800">
+        <option value="AC">AC</option>
+        <option value="IN">IN</option>
+        <option value="BL">BL</option>
+      </select>
+    </div>
+
+    {/* Footer fijo */}
+    <div className="p-6 border-t border-zinc-800 flex justify-end gap-2">
+      <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+      <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+        {loading ? "Guardando..." : "Guardar"}
+      </Button>
+      <Button variant="primary" onClick={handleTelefonosSave} disabled={loading}>
+        {loading ? "Guardando..." : "Guardar Teléfonos"}
+      </Button>
+    </div>
+  </div>
+</div>
   );
 }
