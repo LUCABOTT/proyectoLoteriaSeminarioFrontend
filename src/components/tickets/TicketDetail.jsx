@@ -45,7 +45,7 @@ export const TicketDetail = ({ ticket, numeros, juego, sorteo, onClose }) => {
       <Card className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-zinc-900 border border-zinc-800">
         <CardBody className="p-0">
           {/* Header con gradiente */}
-          <div className={`bg-gradient-to-r ${colors} p-6 relative`}>
+          <div className={`bg-linear-to-r ${colors} p-6 relative`}>
             <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-white/20 transition text-white">
               <X size={24} />
             </button>

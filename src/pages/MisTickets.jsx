@@ -211,7 +211,7 @@ export default function MisTickets() {
                       </div>
 
                       {/* Números */}
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         <p className="text-xs text-zinc-500 mb-2 font-medium">Números:</p>
                         <div className="flex flex-wrap gap-2">
                           {numeros.slice(0, 5).map((num, idx) => (
