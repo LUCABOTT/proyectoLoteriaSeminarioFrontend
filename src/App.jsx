@@ -28,9 +28,15 @@ import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { useContext } from "react";
 
+// NUEVAS PÁGINAS
+import Sorteos from "./pages/sorteos";
+import Juegos from "./pages/Juegos";
+import MisTickets from "./pages/MisTickets";
+import GestionarTickets from "./pages/GestionarTickets";
+
 function HomeRedirect() {
   const { isAuthenticated } = useContext(AuthContext);
-  return isAuthenticated ? <Navigate to="/sorteos" replace /> : <Home />;
+  return isAuthenticated ? <Navigate to="/lotteries" replace /> : <Home />;
 }
 
 function AppContent() {
@@ -42,7 +48,7 @@ function AppContent() {
       {!hideNavbarAndFooter && <Navbar />}
       <Routes>
         <Route path="/" element={<HomeRedirect />} />
-        
+
         <Route
           path="/login"
           element={
@@ -51,7 +57,7 @@ function AppContent() {
             </GuestRoute>
           }
         />
-        
+
         <Route
           path="/register"
           element={
@@ -60,7 +66,7 @@ function AppContent() {
             </GuestRoute>
           }
         />
-        
+
         <Route
           path="/confirmarCuenta"
           element={
@@ -70,6 +76,15 @@ function AppContent() {
           }
         />
 
+        {/* Catálogo de loterías (alias /sorteos para compatibilidad) */}
+        <Route
+          path="/lotteries"
+          element={
+            <PrivateRoute>
+              <Lotteries />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/sorteos"
           element={
@@ -79,6 +94,7 @@ function AppContent() {
           }
         />
 
+        {/* Dashboard */}
         <Route
           path="/dashboard"
           element={
@@ -88,6 +104,15 @@ function AppContent() {
           }
         />
 
+        {/* Billetera (alias /billetera y /wallet) */}
+        <Route
+          path="/wallet"
+          element={
+            <PrivateRoute>
+              <Wallet />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/billetera"
           element={
@@ -97,93 +122,39 @@ function AppContent() {
           }
         />
 
+        {/* NUEVAS RUTAS */}
         <Route
-  path="/roles"
-  element={
-    <PrivateRoute>
-      <RolesList />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/roles/crear"
-  element={
-    <PrivateRoute>
-      <RolesCreate />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/roles/editar/:id"
-  element={
-    <PrivateRoute>
-      <RolesEdit />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/roles/eliminar/:id"
-  element={
-    <PrivateRoute>
-      <RolesDelete />
-    </PrivateRoute>
-  }
-/>
-
-   <Route
-  path="/roles-usuarios"
-  element={
-    <PrivateRoute>
-      <RolesUsuariosList />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/funciones"
-  element={
-    <PrivateRoute>
-      <FuncionesList />
-    </PrivateRoute>
-  }
-/>
-<Route
-  path="/funciones-roles"
-  element={
-    <PrivateRoute>
-      <FuncionesRolesList />
-    </PrivateRoute>
-  }
-/>
-
-
-<Route
-  path="/usuarios"
-  element={
-    <PrivateRoute>
-      <UsuariosList />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/imagenes-usuarios"
-  element={
-    <PrivateRoute>
-      <ImagenesUsuariosList />
-    </PrivateRoute>
-  }
-/>
-
-<Route path="/google/callback" element={<GoogleCallback />} />
-
-<Route path="/subir-imagen" element={<UploadAvatar />} />
-<Route path="/reactivar-cuenta" element={<ReactivarCuentaPage />} />
-<Route path="/restablecer-contrasena" element={<Restabecerontrasena />} />
-
+          path="/mis-boletos"
+          element={
+            <PrivateRoute>
+              <MisTickets />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/sorteos"
+          element={
+            <PrivateRoute>
+              <Sorteos />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/juegos"
+          element={
+            <PrivateRoute>
+              <Juegos />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/tickets"
+          element={
+            <PrivateRoute>
+              <GestionarTickets />
+            </PrivateRoute>
+          }
+        />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
