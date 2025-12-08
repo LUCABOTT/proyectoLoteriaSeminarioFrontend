@@ -56,28 +56,20 @@ const CountdownTimer = ({ targetDate, colors }) => {
     <div className="flex gap-2">
       {timeLeft.days > 0 && (
         <div className={`flex flex-col items-center ${getBgColor()} px-3 py-2 rounded shadow`}>
-          <span className={`text-lg font-bold ${getTextColor()}`}>
-            {String(timeLeft.days).padStart(2, "0")}
-          </span>
+          <span className={`text-lg font-bold ${getTextColor()}`}>{String(timeLeft.days).padStart(2, "0")}</span>
           <span className={`text-xs font-semibold ${getTextColor()}`}>d</span>
         </div>
       )}
       <div className={`flex flex-col items-center ${getBgColor()} px-3 py-2 rounded shadow`}>
-        <span className={`text-lg font-bold ${getTextColor()}`}>
-          {String(timeLeft.hours).padStart(2, "0")}
-        </span>
+        <span className={`text-lg font-bold ${getTextColor()}`}>{String(timeLeft.hours).padStart(2, "0")}</span>
         <span className={`text-xs font-semibold ${getTextColor()}`}>h</span>
       </div>
       <div className={`flex flex-col items-center ${getBgColor()} px-3 py-2 rounded shadow`}>
-        <span className={`text-lg font-bold ${getTextColor()}`}>
-          {String(timeLeft.minutes).padStart(2, "0")}
-        </span>
+        <span className={`text-lg font-bold ${getTextColor()}`}>{String(timeLeft.minutes).padStart(2, "0")}</span>
         <span className={`text-xs font-semibold ${getTextColor()}`}>m</span>
       </div>
       <div className={`flex flex-col items-center ${getBgColor()} px-3 py-2 rounded shadow`}>
-        <span className={`text-lg font-bold ${getTextColor()}`}>
-          {String(timeLeft.seconds).padStart(2, "0")}
-        </span>
+        <span className={`text-lg font-bold ${getTextColor()}`}>{String(timeLeft.seconds).padStart(2, "0")}</span>
         <span className={`text-xs font-semibold ${getTextColor()}`}>s</span>
       </div>
     </div>
@@ -87,7 +79,7 @@ const CountdownTimer = ({ targetDate, colors }) => {
 // Función para obtener los colores del juego
 const getJuegoColors = (nombreJuego) => {
   const nombre = (nombreJuego || "").toLowerCase();
-  
+
   if (nombre.includes("pega 3") || nombre.includes("pega3")) {
     return {
       gradientFrom: "from-yellow-400",
@@ -99,10 +91,10 @@ const getJuegoColors = (nombreJuego) => {
       iconBg: "from-yellow-400 to-yellow-600",
       timerBg: "bg-yellow-100",
       resultBg: "from-yellow-50",
-      resultTo: "to-yellow-100"
+      resultTo: "to-yellow-100",
     };
   }
-  
+
   if (nombre.includes("diaria") || nombre.includes("la diaria")) {
     return {
       gradientFrom: "from-red-400",
@@ -114,10 +106,10 @@ const getJuegoColors = (nombreJuego) => {
       iconBg: "from-red-400 to-red-600",
       timerBg: "bg-red-100",
       resultBg: "from-red-50",
-      resultTo: "to-red-100"
+      resultTo: "to-red-100",
     };
   }
-  
+
   if (nombre.includes("pegados") || nombre.includes("pega dos") || nombre.includes("pega 2")) {
     return {
       gradientFrom: "from-blue-400",
@@ -129,10 +121,10 @@ const getJuegoColors = (nombreJuego) => {
       iconBg: "from-blue-400 to-blue-600",
       timerBg: "bg-blue-100",
       resultBg: "from-blue-50",
-      resultTo: "to-blue-100"
+      resultTo: "to-blue-100",
     };
   }
-  
+
   if (nombre.includes("super premio")) {
     return {
       gradientFrom: "from-green-400",
@@ -144,10 +136,10 @@ const getJuegoColors = (nombreJuego) => {
       iconBg: "from-green-400 to-green-600",
       timerBg: "bg-green-100",
       resultBg: "from-green-50",
-      resultTo: "to-green-100"
+      resultTo: "to-green-100",
     };
   }
-  
+
   // Color por defecto (púrpura) para juegos nuevos
   return {
     gradientFrom: "from-purple-400",
@@ -159,7 +151,7 @@ const getJuegoColors = (nombreJuego) => {
     iconBg: "from-purple-400 to-purple-600",
     timerBg: "bg-purple-100",
     resultBg: "from-purple-50",
-    resultTo: "to-purple-100"
+    resultTo: "to-purple-100",
   };
 };
 
@@ -180,10 +172,7 @@ export default function Lotteries() {
   const últimoSorteoPorJuego = {};
   sorteosRealizados.forEach((sorteo) => {
     const juegoId = sorteo.IdJuego;
-    if (
-      !últimoSorteoPorJuego[juegoId] ||
-      new Date(sorteo.Cierre) > new Date(últimoSorteoPorJuego[juegoId].Cierre)
-    ) {
+    if (!últimoSorteoPorJuego[juegoId] || new Date(sorteo.Cierre) > new Date(últimoSorteoPorJuego[juegoId].Cierre)) {
       últimoSorteoPorJuego[juegoId] = sorteo;
     }
   });
@@ -244,9 +233,7 @@ export default function Lotteries() {
       <div className="max-w-7xl mx-auto">
         {/* Header Principal */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-extrabold text-white mb-4">
-            🎰 Sorteos en Vivo
-          </h1>
+          <h1 className="text-5xl font-extrabold text-white mb-4">🎰 Sorteos en Vivo</h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Próximos sorteos con premios increíbles y resultados de los últimos sorteos realizados
           </p>
@@ -294,14 +281,16 @@ export default function Lotteries() {
                 return (
                   <Card
                     key={sorteo.Id}
-                    className={`hover:shadow-2xl transition-all duration-300 border-l-8 ${colors.border} bg-gradient-to-r ${colors.gradientFrom} ${colors.gradientTo}`}
+                    className={`hover:shadow-2xl transition-all duration-300 border-l-8 ${colors.border} bg-linear-to-r ${colors.gradientFrom} ${colors.gradientTo}`}
                   >
                     <CardBody className="p-8">
                       <div className="grid md:grid-cols-3 gap-8 items-center">
                         {/* COLUMNA 1: Información del Juego */}
                         <div className="md:col-span-1">
                           <div className="flex items-center gap-3 mb-4">
-                            <div className={`w-14 h-14 bg-gradient-to-br ${colors.iconBg} rounded-full flex items-center justify-center shadow-lg`}>
+                            <div
+                              className={`w-14 h-14 bg-linear-to-br ${colors.iconBg} rounded-full flex items-center justify-center shadow-lg`}
+                            >
                               <Ticket className="text-white" size={28} />
                             </div>
                             <div>
@@ -358,7 +347,7 @@ export default function Lotteries() {
                             <CountdownTimer targetDate={sorteo.Cierre} colors={colors} />
                           </div>
 
-                         {/* Botón de compra con animación mejorada */}
+                          {/* Botón de compra con animación mejorada */}
                           <button
                             onClick={() => handleComprarClick(sorteo)}
                             disabled={sorteo.Estado !== "abierto"}
@@ -374,53 +363,48 @@ export default function Lotteries() {
                             `}
                           >
                             {/* Brillo animado al hover */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-shimmer"></div>
-                            
+                            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-shimmer"></div>
+
                             {/* Contenido del botón */}
                             <div className="relative flex items-center justify-center gap-3">
                               {sorteo.Estado === "abierto" ? (
                                 <>
-                                  <svg 
-                                    className="w-6 h-6 group-hover:animate-bounce" 
-                                    fill="none" 
-                                    stroke="currentColor" 
+                                  <svg
+                                    className="w-6 h-6 group-hover:animate-bounce"
+                                    fill="none"
+                                    stroke="currentColor"
                                     viewBox="0 0 24 24"
                                   >
-                                    <path 
-                                      strokeLinecap="round" 
-                                      strokeLinejoin="round" 
-                                      strokeWidth={2} 
-                                      d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" 
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
                                     />
                                   </svg>
                                   <span className="text-lg">Comprar Boleto</span>
-                                  <svg 
-                                    className="w-5 h-5 group-hover:translate-x-1 transition-transform" 
-                                    fill="none" 
-                                    stroke="currentColor" 
+                                  <svg
+                                    className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                                    fill="none"
+                                    stroke="currentColor"
                                     viewBox="0 0 24 24"
                                   >
-                                    <path 
-                                      strokeLinecap="round" 
-                                      strokeLinejoin="round" 
-                                      strokeWidth={2} 
-                                      d="M9 5l7 7-7 7" 
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 5l7 7-7 7"
                                     />
                                   </svg>
                                 </>
                               ) : (
                                 <>
-                                  <svg 
-                                    className="w-6 h-6" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path 
-                                      strokeLinecap="round" 
-                                      strokeLinejoin="round" 
-                                      strokeWidth={2} 
-                                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" 
+                                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                                     />
                                   </svg>
                                   <span className="text-lg">Sorteo Cerrado</span>
@@ -433,11 +417,9 @@ export default function Lotteries() {
                               <div className="absolute inset-0 rounded-xl bg-yellow-400 opacity-0 group-hover:opacity-20 group-hover:animate-ping"></div>
                             )}
                           </button>
-                          
+
                           {sorteo.Estado !== "abierto" && (
-                            <p className="text-xs text-white/80 mt-2 font-medium">
-                              Las ventas han finalizado
-                            </p>
+                            <p className="text-xs text-white/80 mt-2 font-medium">Las ventas han finalizado</p>
                           )}
                         </div>
                       </div>
@@ -485,14 +467,16 @@ export default function Lotteries() {
                 return (
                   <Card
                     key={sorteo.Id}
-                    className={`bg-gradient-to-br ${colors.resultBg} ${colors.resultTo} border-l-8 ${colors.border} hover:shadow-2xl transition-all duration-300`}
+                    className={`bg-linear-to-br ${colors.resultBg} ${colors.resultTo} border-l-8 ${colors.border} hover:shadow-2xl transition-all duration-300`}
                   >
                     <CardBody className="p-8">
                       <div className="grid md:grid-cols-3 gap-8 items-center">
                         {/* COLUMNA 1: Info del Juego */}
                         <div>
                           <div className="flex items-center gap-3 mb-4">
-                            <div className={`w-14 h-14 bg-gradient-to-br ${colors.iconBg} rounded-full flex items-center justify-center shadow-lg`}>
+                            <div
+                              className={`w-14 h-14 bg-linear-to-br ${colors.iconBg} rounded-full flex items-center justify-center shadow-lg`}
+                            >
                               <Trophy className="text-white" size={28} />
                             </div>
                             <div>
@@ -529,12 +513,13 @@ export default function Lotteries() {
                               </p>
                               <div className="flex flex-wrap justify-center md:justify-start gap-4">
                                 {sorteo.NumerosGanadores.map((num, idx) => (
-                                  <div
-                                    key={idx}
-                                    className="relative group"
-                                  >
-                                    <div className={`absolute inset-0 bg-gradient-to-br ${colors.numberBg} rounded-full blur-md opacity-50 group-hover:opacity-75 transition`}></div>
-                                    <div className={`relative flex items-center justify-center w-16 h-16 bg-gradient-to-br ${colors.numberBg} text-white font-bold rounded-full text-xl shadow-lg hover:scale-110 transition-transform`}>
+                                  <div key={idx} className="relative group">
+                                    <div
+                                      className={`absolute inset-0 bg-linear-to-br ${colors.numberBg} rounded-full blur-md opacity-50 group-hover:opacity-75 transition`}
+                                    ></div>
+                                    <div
+                                      className={`relative flex items-center justify-center w-16 h-16 bg-linear-to-br ${colors.numberBg} text-white font-bold rounded-full text-xl shadow-lg hover:scale-110 transition-transform`}
+                                    >
                                       {num}
                                     </div>
                                   </div>
@@ -542,9 +527,7 @@ export default function Lotteries() {
                               </div>
                             </div>
                           ) : (
-                            <div className="text-center text-gray-600 italic">
-                              Números ganadores no disponibles
-                            </div>
+                            <div className="text-center text-gray-600 italic">Números ganadores no disponibles</div>
                           )}
 
                           <div className="mt-6 flex justify-center md:justify-end">
@@ -564,14 +547,16 @@ export default function Lotteries() {
 
         {/* Call to Action Final (solo si hay sorteos activos) */}
         {sorteosPróximos.length > 0 && (
-          <div className="mt-16 text-center bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl p-12 shadow-2xl">
+          <div className="mt-16 text-center bg-linear-to-r from-yellow-400 to-orange-500 rounded-2xl p-12 shadow-2xl">
             <h3 className="text-3xl font-bold text-white mb-4 drop-shadow-md">
               ¡No te pierdas la oportunidad de ganar!
             </h3>
-            <p className="text-white text-lg mb-6">
-              Participa en nuestros sorteos y sé el próximo ganador
-            </p>
-            <Button variant="primary" size="lg" className="bg-white text-orange-600 hover:bg-gray-100 shadow-xl font-bold">
+            <p className="text-white text-lg mb-6">Participa en nuestros sorteos y sé el próximo ganador</p>
+            <Button
+              variant="primary"
+              size="lg"
+              className="bg-white text-orange-600 hover:bg-gray-100 shadow-xl font-bold"
+            >
               <Ticket className="mr-2" size={24} />
               Ver Sorteos Disponibles
             </Button>
