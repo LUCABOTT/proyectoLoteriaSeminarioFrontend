@@ -10,7 +10,6 @@ import RolesList from "./pages/roles/RolesList";
 import RolesCreate from "./pages/roles/RolesCreate";
 import RolesEdit from "./pages/roles/RolesEdit";
 import RolesDelete from "./pages/roles/RolesDelete";
-import RolesUsuariosList from "./pages/rolesusuarios/RolesUsuariosList";
 import FuncionesList from "./pages/FuncionesList";
 import FuncionesRolesList from "./pages/FuncionesRolesList";
 import UsuariosList from "./pages/UsuariosList";
@@ -204,14 +203,6 @@ function AppContent() {
           element={
             <RoleRoute allowedRoles={['ADM']}>
               <RolesDelete />
-            </RoleRoute>
-          }
-        />
-        <Route
-          path="/roles-usuarios"
-          element={
-            <RoleRoute allowedRoles={['ADM']}>
-              <RolesUsuariosList />
             </RoleRoute>
           }
         />

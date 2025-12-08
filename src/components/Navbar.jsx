@@ -25,7 +25,6 @@ const admNavLinks = [
   { label: "Juegos", href: "/admin/juegos" },
   { label: "Boletos", href: "/admin/tickets" },
   { label: "Roles", href: "/roles" },
-  { label: "Roles Usuarios", href: "/roles-usuarios" },
   { label: "Funciones", href: "/funciones" },
   { label: "Funciones Roles", href: "/funciones-roles" },
   { label: "Usuarios", href: "/usuarios" },

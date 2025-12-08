@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Button, Badge, Spinner, Card, CardBody, Input, Alert } from "../components/ui";
-import { User, Plus, Edit2, Trash2, Search, RefreshCw, Mail, Phone, Calendar } from "lucide-react";
+import { User, Plus, Edit2, Trash2, Search, RefreshCw, Mail, Phone, Calendar, Shield } from "lucide-react";
 import usuariosService from "../services/Usuarios/usuariosService";
 import UsuarioModalCreate from "../components/Usuarios/UsuarioCreate";
 import UsuarioModalEdit from "../components/Usuarios/UsuarioEdit";
 import UsuarioModalDelete from "../components/Usuarios/UsuarioDelete";
+import UsuarioManageRoles from "../components/Usuarios/UsuarioManageRoles";
 
 export default function UsuariosList() {
   const [usuarios, setUsuarios] = useState([]);
@@ -15,6 +16,7 @@ export default function UsuariosList() {
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [openManageRoles, setOpenManageRoles] = useState(false);
   const [selectedUsuario, setSelectedUsuario] = useState(null);
 
   async function cargarUsuarios() {
@@ -213,14 +215,14 @@ export default function UsuariosList() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
-                        {u.Roles?.length > 0 ? (
-                          u.Roles.map((r) => (
+                        {u.roles?.length > 0 ? (
+                          u.roles.map((r) => (
                             <Badge key={r.rolescod} variant="default" className="text-xs">
                               {r.rolesdsc}
                             </Badge>
                           ))
                         ) : (
-                          <span className="text-xs text-zinc-500">Sin roles</span>
+                          <span className="text-xs text-zinc-500">Sin rol</span>
                         )}
                       </div>
                     </td>
@@ -237,6 +239,16 @@ export default function UsuariosList() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() => {
+                            setSelectedUsuario(u);
+                            setOpenManageRoles(true);
+                          }}
+                          className="p-2 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 rounded transition"
+                          title="Gestionar roles"
+                        >
+                          <Shield className="w-4 h-4" />
+                        </button>
                         <button
                           onClick={() => {
                             setSelectedUsuario(u);
@@ -289,6 +301,12 @@ export default function UsuariosList() {
           onClose={() => setOpenDelete(false)}
           usuario={selectedUsuario}
           onDeleted={cargarUsuarios}
+        />
+        <UsuarioManageRoles
+          isOpen={openManageRoles}
+          onClose={() => setOpenManageRoles(false)}
+          usuario={selectedUsuario}
+          onSaved={cargarUsuarios}
         />
       </div>
     </div>
