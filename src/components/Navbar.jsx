@@ -1,5 +1,5 @@
 import { Menu, Ticket, X, User, LogOut, Wallet } from "lucide-react";
-import { href, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 
@@ -10,16 +10,21 @@ const publicNavLinks = [
   { label: "Contacto", href: "#contacto" },
 ];
 
+// Se agregan Dashboard y se mantiene Loterías
 const privateNavLinks = [
-  { label: "Sorteos", href: "/sorteos" },
-  { label: "Billetera", href: "/billetera" },
-  { label: "Mis boletos", href: "/dashboard" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Loterías", href: "/lotteries" },
+  { label: "Sorteos", href: "/admin/sorteos" },
+  { label: "Juegos", href: "/admin/juegos" },
+  { label: "Boletos", href: "/admin/tickets" },
+  { label: "Mis boletos", href: "/mis-boletos" },
+  { label: "Billetera", href: "/wallet" },
   { label: "Roles", href: "/roles" },
- { label: "Roles_Usuarios", href: "/roles-usuarios" },
- {label: "Funciones", href: "/funciones"},
- {label: "Funciones_Roles", href: "/funciones-roles"},
- {label: "Usuarios", href: "/usuarios"},
- {label: "Imagenes Usuarios", href: "/imagenes-usuarios"},
+  { label: "Roles_Usuarios", href: "/roles-usuarios" },
+  { label: "Funciones", href: "/funciones" },
+  { label: "Funciones_Roles", href: "/funciones-roles" },
+  { label: "Usuarios", href: "/usuarios" },
+  { label: "Imagenes Usuarios", href: "/imagenes-usuarios" },
 ];
 
 export function Navbar() {
@@ -36,14 +41,8 @@ export function Navbar() {
         setShowUserMenu(false);
       }
     };
-
-    if (showUserMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    if (showUserMenu) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showUserMenu]);
 
   const handleLogout = () => {
@@ -54,28 +53,31 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800">
-      <div className="container mx-auto px-6 max-w-5xl">
-        <div className="flex items-center justify-between h-16">
-          <Link to={isAuthenticated ? "/sorteos" : "/"} className="flex items-center gap-2">
+      <div className="w-full px-3 sm:px-6">
+        <div className="flex items-center h-16 gap-4">
+          <Link to={isAuthenticated ? "/lotteries" : "/"} className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 bg-amber-400 flex items-center justify-center">
               <Ticket className="w-4 h-4 text-zinc-950" />
             </div>
             <span className="text-zinc-100 font-semibold text-lg">Lotería</span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="text-zinc-400 hover:text-zinc-100 text-sm font-medium transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Enlaces desktop con barra deslizable, ancho extendido */}
+          <div className="hidden md:block flex-1 min-w-0 mx-2">
+            <div className="flex items-center gap-6 overflow-x-auto no-scrollbar py-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="text-zinc-400 hover:text-zinc-100 whitespace-nowrap text-sm font-medium transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4 shrink-0">
             {isAuthenticated ? (
               <div className="relative" ref={userMenuRef}>
                 <button
@@ -98,16 +100,16 @@ export function Navbar() {
                       <User className="w-4 h-4" />
                       Mi perfil
                     </Link>
-                     <Link
-                        to="/subir-imagen"
-                        onClick={() => setShowUserMenu(false)}
-                        className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
-                      >
-                        <User className="w-4 h-4" />
-                        Subir foto
-                      </Link>
                     <Link
-                      to="/billetera"
+                      to="/subir-imagen"
+                      onClick={() => setShowUserMenu(false)}
+                      className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
+                    >
+                      <User className="w-4 h-4" />
+                      Subir foto
+                    </Link>
+                    <Link
+                      to="/wallet"
                       onClick={() => setShowUserMenu(false)}
                       className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
                     >
@@ -181,7 +183,7 @@ export function Navbar() {
                       Mi perfil
                     </Link>
                     <Link
-                      to="/billetera"
+                      to="/wallet"
                       onClick={() => setIsOpen(false)}
                       className="px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 text-sm font-medium transition-colors flex items-center gap-2"
                     >
