@@ -23,16 +23,9 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
-  // 👇 ESTE ES EL USE EFFECT NUEVO
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-
-    if (token) {
-      localStorage.setItem("token", token);
-      navigate("/dashboard", { replace: true });
-    }
-  }, []);
+    loadDashboardData();
+  }, [user?.id]);
 
   const loadDashboardData = async () => {
     if (!user?.id) return;
