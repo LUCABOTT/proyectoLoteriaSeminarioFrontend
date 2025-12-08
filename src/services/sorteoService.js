@@ -7,6 +7,12 @@ export const sorteoService = {
     return response.data;
   },
 
+  // Obtener el sorteo más próximo a cerrar
+  getProximoSorteo: async () => {
+    const response = await apiClient.get('/api/sorteos/proximo');
+    return response.data;
+  },
+
   // Crear nuevo sorteo
   createSorteo: async (data) => {
     const response = await apiClient.post('/api/sorteos/guardar', data);

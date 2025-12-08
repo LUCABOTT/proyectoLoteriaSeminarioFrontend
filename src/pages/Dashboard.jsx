@@ -83,7 +83,7 @@ function AdminDashboard() {
       <div className="container mx-auto max-w-7xl">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Panel de Administración</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Panel de administración</h1>
             <p className="text-zinc-400">
               Bienvenido, {userProfile?.primerNombre || user?.firstName || "Administrador"}
             </p>

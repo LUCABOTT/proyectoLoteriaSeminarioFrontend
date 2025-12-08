@@ -3,6 +3,7 @@
 import { Calendar, Clock, CreditCard, DollarSign, Gift, Tag, Ticket, UserCheck, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button, Card, Badge, Spinner } from "../components/ui";
+import { sorteoService } from "../services/sorteoService";
 
 const CountdownTimer = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({
@@ -56,6 +57,7 @@ const CountdownTimer = ({ targetDate }) => {
 export default function Home() {
   const [particles, setParticles] = useState([]);
   const [lotteryData, setLotteryData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.title = "Inicio - Lotería";
@@ -73,19 +75,15 @@ export default function Home() {
     setParticles(newParticles);
 
     const fetchLotteryData = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const apiResponse = {
-        id: "diaria-2025-11-30",
-        name: "La Diaria",
-        description: "Sorteo diario con premios garantizados",
-        prize: "L. 250,000",
-        closeDate: "2025-11-30T18:00:00",
-        drawDate: "30/11/2025",
-        ticketsSold: 3247,
-        minPurchase: "L. 20",
-        numbersFormat: "4 números de 0-9",
-      };
-      setLotteryData(apiResponse);
+      try {
+        const data = await sorteoService.getProximoSorteo();
+        setLotteryData(data);
+      } catch (error) {
+        console.error('Error al cargar sorteo:', error);
+        setLotteryData(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchLotteryData();
@@ -169,31 +167,37 @@ export default function Home() {
 
       <section id="contador" className="py-24 bg-zinc-900">
         <div className="container mx-auto px-6 max-w-5xl">
-          {lotteryData ? (
+          {loading ? (
+            <Spinner center size="xl" />
+          ) : lotteryData ? (
             <>
               <div className="text-center mb-16">
                 <Badge variant="primary" className="mb-6 inline-flex items-center gap-2">
                   <Clock size={16} />
                   Cierra pronto
                 </Badge>
-                <h2 className="text-3xl md:text-5xl font-semibold text-zinc-100 mb-4">{lotteryData.name}</h2>
-                <p className="text-zinc-400 text-base max-w-xl mx-auto">{lotteryData.description}</p>
+                <h2 className="text-3xl md:text-5xl font-semibold text-zinc-100 mb-4">
+                  {lotteryData.juego?.Nombre || 'Sorteo'}
+                </h2>
+                <p className="text-zinc-400 text-base max-w-xl mx-auto">
+                  {lotteryData.juego?.Descripcion || 'Sorteo disponible'}
+                </p>
               </div>
 
               <div className="mb-16">
-                <CountdownTimer targetDate={lotteryData.closeDate} />
+                <CountdownTimer targetDate={lotteryData.Cierre} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
                 <Card hover className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-zinc-900 flex items-center justify-center shrink-0">
-                      <Users className="w-5 h-5 text-amber-400" />
+                      <Tag className="w-5 h-5 text-amber-400" />
                     </div>
                     <div>
-                      <p className="text-zinc-500 text-sm font-medium mb-1">Boletos vendidos</p>
+                      <p className="text-zinc-500 text-sm font-medium mb-1">Precio por boleto</p>
                       <p className="text-lg text-zinc-100 font-semibold tabular-nums">
-                        {lotteryData.ticketsSold.toLocaleString()}
+                        L. {lotteryData.juego?.PrecioJuego || '0.00'}
                       </p>
                     </div>
                   </div>
@@ -202,11 +206,13 @@ export default function Home() {
                 <Card hover className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-zinc-900 flex items-center justify-center shrink-0">
-                      <Tag className="w-5 h-5 text-amber-400" />
+                      <Ticket className="w-5 h-5 text-amber-400" />
                     </div>
                     <div>
-                      <p className="text-zinc-500 text-sm font-medium mb-1">Precio por boleto</p>
-                      <p className="text-lg text-zinc-100 font-semibold tabular-nums">{lotteryData.minPurchase}</p>
+                      <p className="text-zinc-500 text-sm font-medium mb-1">Números a elegir</p>
+                      <p className="text-lg text-zinc-100 font-semibold">
+                        {lotteryData.juego?.CantidadNumeros || 0} números
+                      </p>
                     </div>
                   </div>
                 </Card>
@@ -217,21 +223,36 @@ export default function Home() {
                       <Calendar className="w-5 h-5 text-amber-400" />
                     </div>
                     <div>
-                      <p className="text-zinc-500 text-sm font-medium mb-1">Fecha del sorteo</p>
-                      <p className="text-lg text-zinc-100 font-semibold">{lotteryData.drawDate}</p>
+                      <p className="text-zinc-500 text-sm font-medium mb-1">Fecha de cierre</p>
+                      <p className="text-lg text-zinc-100 font-semibold">
+                        {new Date(lotteryData.Cierre).toLocaleDateString('es-HN')}
+                      </p>
                     </div>
                   </div>
                 </Card>
               </div>
 
               <div className="text-center">
-                <Button variant="primary" size="xl">
+                <Button variant="primary" size="xl" onClick={() => window.location.href = '/juegos'}>
                   Comprar boleto ahora
                 </Button>
               </div>
             </>
           ) : (
-            <Spinner center size="xl" />
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-6 rounded-full">
+                <Ticket className="w-12 h-12 text-zinc-600" />
+              </div>
+              <h3 className="text-2xl font-semibold text-zinc-100 mb-4">
+                No hay sorteos disponibles
+              </h3>
+              <p className="text-zinc-400 text-base max-w-md mx-auto mb-8">
+                Por el momento no hay sorteos activos. Vuelve pronto para participar en los próximos sorteos.
+              </p>
+              <Button variant="outline" size="lg" onClick={() => window.location.href = '/juegos'}>
+                Ver todos los juegos
+              </Button>
+            </div>
           )}
         </div>
       </section>
