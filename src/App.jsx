@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
+import RoleRoute from "./components/RoleRoute";
 import GuestRoute from "./components/GuestRoute";
+import RoleWarning from "./components/RoleWarning";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import ActivacionCuenta from "./pages/ActivacionCuenta";
 import Dashboard from "./pages/Dashboard";
@@ -35,8 +37,21 @@ import MisTickets from "./pages/MisTickets";
 import GestionarTickets from "./pages/GestionarTickets";
 
 function HomeRedirect() {
-  const { isAuthenticated } = useContext(AuthContext);
-  return isAuthenticated ? <Navigate to="/lotteries" replace /> : <Home />;
+  const { isAuthenticated, user } = useContext(AuthContext);
+  
+  if (!isAuthenticated) return <Home />;
+  
+  const userRoles = user?.roles || [];
+  // Administradores van al panel de administración
+  if (userRoles.includes('ADM')) {
+    return <Navigate to="/admin/sorteos" replace />;
+  }
+  // Jugadores van al catálogo de loterías
+  if (userRoles.includes('PBL') || userRoles.includes('USR')) {
+    return <Navigate to="/lotteries" replace />;
+  }
+  
+  return <Navigate to="/dashboard" replace />;
 }
 
 function AppContent() {
@@ -46,6 +61,7 @@ function AppContent() {
   return (
     <>
       {!hideNavbarAndFooter && <Navbar />}
+      <RoleWarning />
       <Routes>
         <Route path="/" element={<HomeRedirect />} />
 
@@ -76,21 +92,21 @@ function AppContent() {
           }
         />
 
-        {/* Catálogo de loterías (alias /sorteos para compatibilidad) */}
+        {/* Catálogo de loterías - SOLO para jugadores (PBL/USR) */}
         <Route
           path="/lotteries"
           element={
-            <PrivateRoute>
+            <RoleRoute allowedRoles={['PBL', 'USR']}>
               <Lotteries />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
         <Route
           path="/sorteos"
           element={
-            <PrivateRoute>
+            <RoleRoute allowedRoles={['PBL', 'USR']}>
               <Lotteries />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
 
@@ -104,55 +120,163 @@ function AppContent() {
           }
         />
 
-        {/* Billetera (alias /billetera y /wallet) */}
+        {/* Billetera - SOLO para jugadores (PBL/USR) */}
         <Route
           path="/wallet"
           element={
-            <PrivateRoute>
+            <RoleRoute allowedRoles={['PBL', 'USR']}>
               <Wallet />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
         <Route
           path="/billetera"
           element={
-            <PrivateRoute>
+            <RoleRoute allowedRoles={['PBL', 'USR']}>
               <Wallet />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
 
-        {/* NUEVAS RUTAS */}
+        {/* Rutas para usuarios PBL/USR (jugadores) */}
         <Route
           path="/mis-boletos"
           element={
-            <PrivateRoute>
+            <RoleRoute allowedRoles={['PBL', 'USR']}>
               <MisTickets />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
+
+        {/* Rutas de administración - solo para ADM */}
         <Route
           path="/admin/sorteos"
           element={
-            <PrivateRoute>
+            <RoleRoute allowedRoles={['ADM']}>
               <Sorteos />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
         <Route
           path="/admin/juegos"
           element={
-            <PrivateRoute>
+            <RoleRoute allowedRoles={['ADM']}>
               <Juegos />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
         <Route
           path="/admin/tickets"
           element={
-            <PrivateRoute>
+            <RoleRoute allowedRoles={['ADM']}>
               <GestionarTickets />
+            </RoleRoute>
+          }
+        />
+
+        {/* Rutas de gestión de usuarios - solo para ADM */}
+        <Route
+          path="/roles"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <RolesList />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/roles/crear"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <RolesCreate />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/roles/editar/:id"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <RolesEdit />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/roles/eliminar/:id"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <RolesDelete />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/roles-usuarios"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <RolesUsuariosList />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/funciones"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <FuncionesList />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/funciones-roles"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <FuncionesRolesList />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/usuarios"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <UsuariosList />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/imagenes-usuarios"
+          element={
+            <RoleRoute allowedRoles={['ADM']}>
+              <ImagenesUsuariosList />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/subir-imagen"
+          element={
+            <PrivateRoute>
+              <UploadAvatar />
             </PrivateRoute>
+          }
+        />
+        <Route
+          path="/reactivar-cuenta"
+          element={
+            <GuestRoute>
+              <ReactivarCuentaPage />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/restablecer-contrasena"
+          element={
+            <GuestRoute>
+              <Restabecerontrasena />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/auth/google/callback"
+          element={
+            <GuestRoute>
+              <GoogleCallback />
+            </GuestRoute>
           }
         />
 

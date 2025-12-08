@@ -10,21 +10,26 @@ const publicNavLinks = [
   { label: "Contacto", href: "#contacto" },
 ];
 
-// Se agregan Dashboard y se mantiene Loterías
-const privateNavLinks = [
+// Links para usuarios con rol PBL/USR (jugadores)
+const jugadorNavLinks = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Loterías", href: "/lotteries" },
+  { label: "Mis boletos", href: "/mis-boletos" },
+  { label: "Billetera", href: "/wallet" },
+];
+
+// Links para usuarios con rol ADM (administradores) - NO tienen acceso a juegos
+const admNavLinks = [
+  { label: "Dashboard", href: "/dashboard" },
   { label: "Sorteos", href: "/admin/sorteos" },
   { label: "Juegos", href: "/admin/juegos" },
   { label: "Boletos", href: "/admin/tickets" },
-  { label: "Mis boletos", href: "/mis-boletos" },
-  { label: "Billetera", href: "/wallet" },
   { label: "Roles", href: "/roles" },
-  { label: "Roles_Usuarios", href: "/roles-usuarios" },
+  { label: "Roles Usuarios", href: "/roles-usuarios" },
   { label: "Funciones", href: "/funciones" },
-  { label: "Funciones_Roles", href: "/funciones-roles" },
+  { label: "Funciones Roles", href: "/funciones-roles" },
   { label: "Usuarios", href: "/usuarios" },
-  { label: "Imagenes Usuarios", href: "/imagenes-usuarios" },
+  { label: "Imagenes", href: "/imagenes-usuarios" },
 ];
 
 export function Navbar() {
@@ -33,7 +38,20 @@ export function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const userMenuRef = useRef(null);
 
-  const navLinks = isAuthenticated ? privateNavLinks : publicNavLinks;
+  // Determinar links según rol del usuario
+  const getNavLinks = () => {
+    if (!isAuthenticated) return publicNavLinks;
+
+    const userRoles = user?.roles || [];
+    // Administradores NO pueden jugar
+    if (userRoles.includes("ADM")) return admNavLinks;
+    // Jugadores (PBL o USR)
+    if (userRoles.includes("PBL") || userRoles.includes("USR")) return jugadorNavLinks;
+
+    return [];
+  };
+
+  const navLinks = getNavLinks();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -51,11 +69,24 @@ export function Navbar() {
     setIsOpen(false);
   };
 
+  // Determinar la ruta del logo según el rol
+  const getLogoPath = () => {
+    if (!isAuthenticated) return "/";
+
+    const userRoles = user?.roles || [];
+    // Administradores van al panel de administración
+    if (userRoles.includes("ADM")) return "/admin/sorteos";
+    // Jugadores van al catálogo de loterías
+    if (userRoles.includes("PBL") || userRoles.includes("USR")) return "/lotteries";
+
+    return "/";
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800">
       <div className="w-full px-3 sm:px-6">
         <div className="flex items-center h-16 gap-4">
-          <Link to={isAuthenticated ? "/lotteries" : "/"} className="flex items-center gap-2 shrink-0">
+          <Link to={getLogoPath()} className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 bg-amber-400 flex items-center justify-center">
               <Ticket className="w-4 h-4 text-zinc-950" />
             </div>
@@ -100,22 +131,16 @@ export function Navbar() {
                       <User className="w-4 h-4" />
                       Mi perfil
                     </Link>
-                    <Link
-                      to="/subir-imagen"
-                      onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
-                    >
-                      <User className="w-4 h-4" />
-                      Subir foto
-                    </Link>
-                    <Link
-                      to="/wallet"
-                      onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
-                    >
-                      <Wallet className="w-4 h-4" />
-                      Mi billetera
-                    </Link>
+                    {!user?.roles?.includes("ADM") && (
+                      <Link
+                        to="/wallet"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors"
+                      >
+                        <Wallet className="w-4 h-4" />
+                        Mi billetera
+                      </Link>
+                    )}
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2 px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 text-sm transition-colors text-left"
@@ -182,14 +207,16 @@ export function Navbar() {
                       <User className="w-4 h-4" />
                       Mi perfil
                     </Link>
-                    <Link
-                      to="/wallet"
-                      onClick={() => setIsOpen(false)}
-                      className="px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 text-sm font-medium transition-colors flex items-center gap-2"
-                    >
-                      <Wallet className="w-4 h-4" />
-                      Mi billetera
-                    </Link>
+                    {!user?.roles?.includes("ADM") && (
+                      <Link
+                        to="/wallet"
+                        onClick={() => setIsOpen(false)}
+                        className="px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 text-sm font-medium transition-colors flex items-center gap-2"
+                      >
+                        <Wallet className="w-4 h-4" />
+                        Mi billetera
+                      </Link>
+                    )}
                     <button
                       onClick={handleLogout}
                       className="px-4 py-3 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 text-sm font-medium transition-colors text-left flex items-center gap-2"

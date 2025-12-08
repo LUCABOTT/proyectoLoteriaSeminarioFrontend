@@ -30,7 +30,16 @@ export const AuthProvider = ({ children }) => {
   const login = (jwt, userData) => {
     setToken(jwt);
     setUser(userData);
-    navigate("/dashboard");
+    
+    // Redirigir según el rol del usuario
+    const userRoles = userData?.roles || [];
+    if (userRoles.includes('ADM')) {
+      navigate("/admin/sorteos");
+    } else if (userRoles.includes('PBL') || userRoles.includes('USR')) {
+      navigate("/lotteries");
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   const logout = () => {

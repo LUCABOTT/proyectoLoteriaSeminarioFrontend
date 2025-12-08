@@ -55,10 +55,8 @@ export default function UsuariosList() {
             <th className="p-3 text-left">Nombre Completo</th>
             <th className="p-3 text-left">Email</th>
             <th className="p-3 text-left">Teléfono</th>
+            <th className="p-3 text-left">Roles</th>
             <th className="p-3 text-left">Fecha Ingreso</th>
-            <th className="p-3 text-left">Expiración Contraseña</th>
-            <th className="p-3 text-left">Fecha Nacimiento</th>
-            <th className="p-3 text-left">Tipo</th>
             <th className="p-3 text-left">Estado</th>
             <th className="p-3 text-center">Acciones</th>
           </tr>
@@ -71,18 +69,24 @@ export default function UsuariosList() {
               <td className="p-3">{`${u.primerNombre || ''} ${u.segundoNombre || ''} ${u.primerApellido || ''} ${u.segundoApellido || ''}`}</td>
               <td className="p-3">{u.useremail}</td>
 
-              {/* Teléfono — todavia no viene del backend */}
               <td className="p-3">
               {u.telefonosusuarios?.length > 0
                 ? u.telefonosusuarios.map(t => t.numero).join(", ")
                 : "—"}
             </td>
 
-              <td className="p-3">{formatDate(u.userfching)}</td>
-              <td className="p-3">{formatDate(u.userpswdexp)}</td>
-              <td className="p-3">{formatDate(u.fechaNacimiento)}</td>
+              <td className="p-3">
+                {u.Roles?.length > 0
+                  ? u.Roles.map(r => (
+                      <Badge key={r.rolescod} variant="default" className="mr-1">
+                        {r.rolesdsc}
+                      </Badge>
+                    ))
+                  : "—"}
+              </td>
 
-              <td className="p-3">{u.usertipo}</td>
+              <td className="p-3">{formatDate(u.userfching)}</td>
+
               <td className="p-3">
                 <Badge variant={u.userest === "AC" ? "success" : u.userest === "IN" ? "warning" : "danger"}>
                   {u.userest}

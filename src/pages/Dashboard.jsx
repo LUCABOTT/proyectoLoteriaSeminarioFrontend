@@ -1,14 +1,267 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { Ticket, User, Mail, Calendar, TrendingUp, Award, ShoppingCart, Clock, ArrowUpCircle, ArrowDownCircle, RefreshCw } from "lucide-react";
+import { Ticket, User, Mail, Calendar, TrendingUp, Award, ShoppingCart, Clock, ArrowUpCircle, ArrowDownCircle, RefreshCw, Users, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getHistorial, getSaldo } from "../services/walletService";
 import { getUserProfile } from "../services/authService";
+import dashboardService from "../services/dashboardService";
 import { Card, CardBody, Button, Badge, Spinner } from "../components/ui";
 import { useNavigate } from "react-router-dom";
 
 
 export default function Dashboard() {
+  const { user, logout } = useContext(AuthContext);
+  const userRoles = user?.roles || [];
+  const isAdmin = userRoles.includes('ADM');
+
+  if (isAdmin) {
+    return <AdminDashboard />;
+  }
+
+  return <JugadorDashboard />;
+}
+
+function AdminDashboard() {
+  const { user, logout } = useContext(AuthContext);
+  const [userProfile, setUserProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [stats, setStats] = useState({
+    sorteosActivos: 0,
+    ticketsVendidos: 0,
+    usuariosRegistrados: 0,
+    ventasTotales: 0,
+    actividadReciente: []
+  });
+
+  useEffect(() => {
+    loadAdminData();
+  }, []);
+
+  const loadAdminData = async () => {
+    try {
+      setLoading(true);
+      const [profileData, statsData] = await Promise.all([
+        getUserProfile(),
+        dashboardService.getAdminStats()
+      ]);
+      setUserProfile(profileData);
+      setStats(statsData);
+    } catch (err) {
+      console.error("Error loading admin data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadAdminData();
+    setRefreshing(false);
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("es-HN", {
+      style: "currency",
+      currency: "HNL",
+      minimumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  return (
+    <div className="min-h-screen bg-zinc-950 pt-20 px-6 pb-12">
+      <div className="container mx-auto max-w-7xl">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-2">Panel de Administración</h1>
+            <p className="text-zinc-400">
+              Bienvenido, {userProfile?.primerNombre || user?.firstName || 'Administrador'}
+            </p>
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Actualizar
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                <Ticket className="w-6 h-6 text-blue-400" />
+              </div>
+              <Badge variant="default">Sorteos</Badge>
+            </div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : stats.sorteosActivos}</div>
+            <div className="text-sm text-zinc-500">Sorteos activos</div>
+          </Card>
+
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
+                <ShoppingCart className="w-6 h-6 text-amber-400" />
+              </div>
+              <Badge variant="default">Tickets</Badge>
+            </div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : stats.ticketsVendidos}</div>
+            <div className="text-sm text-zinc-500">Tickets vendidos</div>
+          </Card>
+
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                <Users className="w-6 h-6 text-green-400" />
+              </div>
+              <Badge variant="default">Usuarios</Badge>
+            </div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : stats.usuariosRegistrados}</div>
+            <div className="text-sm text-zinc-500">Usuarios registrados</div>
+          </Card>
+
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-red-400" />
+              </div>
+              <Badge variant="default">Ingresos</Badge>
+            </div>
+            <div className="text-3xl font-bold text-zinc-100 mb-1">{loading ? "..." : formatCurrency(stats.ventasTotales)}</div>
+            <div className="text-sm text-zinc-500">Ventas totales</div>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <Card className="p-6 mb-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
+                  <User className="w-8 h-8 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-zinc-100">
+                    {userProfile?.primerNombre || user?.firstName} {userProfile?.primerApellido || user?.lastName}
+                  </h3>
+                  <p className="text-sm text-zinc-500">Administrador</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <Mail className="w-5 h-5 text-zinc-500 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-zinc-500 mb-1">Email</p>
+                    <p className="text-sm text-zinc-300 break-all">{userProfile?.useremail || user?.email}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-5 h-5 text-zinc-500 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-zinc-500 mb-1">Miembro desde</p>
+                    <p className="text-sm text-zinc-300">
+                      {userProfile?.userfching ? new Date(userProfile.userfching).toLocaleDateString("es-HN", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }) : new Date().toLocaleDateString("es-HN", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Button onClick={logout} variant="danger" className="w-full mt-6">
+                Cerrar sesión
+              </Button>
+            </Card>
+
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-zinc-100 mb-4">Acciones rápidas</h3>
+              <div className="space-y-2">
+                <Link
+                  to="/admin/sorteos"
+                  className="flex items-center gap-3 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-sm transition-colors"
+                >
+                  <Ticket className="w-5 h-5 text-amber-400" />
+                  Gestionar sorteos
+                </Link>
+                <Link
+                  to="/admin/juegos"
+                  className="flex items-center gap-3 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-sm transition-colors"
+                >
+                  <Award className="w-5 h-5 text-amber-400" />
+                  Gestionar juegos
+                </Link>
+                <Link
+                  to="/usuarios"
+                  className="flex items-center gap-3 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-sm transition-colors"
+                >
+                  <Users className="w-5 h-5 text-amber-400" />
+                  Ver usuarios
+                </Link>
+              </div>
+            </Card>
+          </div>
+
+          <div className="lg:col-span-2">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-zinc-100 mb-4">Actividad reciente</h3>
+              {loading ? (
+                <Spinner center />
+              ) : stats.actividadReciente && stats.actividadReciente.length > 0 ? (
+                <div className="space-y-3">
+                  {stats.actividadReciente.map((ticket) => (
+                    <div
+                      key={ticket.IdTicket}
+                      className="flex items-center justify-between p-3 bg-zinc-950 border border-zinc-800"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+                          <ShoppingCart className="w-5 h-5 text-amber-400" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-zinc-100">
+                            {ticket.usuario?.primerNombre} {ticket.usuario?.primerApellido}
+                          </p>
+                          <p className="text-xs text-zinc-500">
+                            {ticket.sorteo?.juego?.Nombre || 'Sorteo'} - {new Date(ticket.FechaCompra).toLocaleDateString("es-HN")}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-green-400">
+                          {formatCurrency(ticket.Total)}
+                        </p>
+                        <p className="text-xs text-zinc-500 capitalize">{ticket.Estado}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <TrendingUp className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+                  <p className="text-zinc-500 mb-2">No hay actividad reciente</p>
+                  <p className="text-sm text-zinc-600">Las ventas de tickets aparecerán aquí</p>
+                </div>
+              )}
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function JugadorDashboard() {
   const { user, logout } = useContext(AuthContext);
   const [userProfile, setUserProfile] = useState(null);
   const [saldo, setSaldo] = useState(0);
