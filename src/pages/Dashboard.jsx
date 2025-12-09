@@ -159,29 +159,13 @@ function AdminDashboard() {
           <div className="lg:col-span-1">
             <Card className="p-6 mb-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="relative">
-                  {profileImage ? (
-                    <img 
-                      src={`${import.meta.env.VITE_API_URL}/api/imagenes/usuarios/${profileImage}`}
-                      alt="Foto de perfil"
-                      className="w-16 h-16 rounded-full object-cover border-2 border-amber-400"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
-                      <User className="w-8 h-8 text-amber-400" />
-                    </div>
-                  )}
-                </div>
+                <ProfilePictureUpload currentImage={profileImage} onImageUpdated={handleImageUpdated} />
                 <div>
                   <h3 className="text-lg font-semibold text-zinc-100">
                     {userProfile?.primerNombre || user?.firstName} {userProfile?.primerApellido || user?.lastName}
                   </h3>
                   <p className="text-sm text-zinc-500">Administrador</p>
                 </div>
-              </div>
-
-              <div className="mb-4">
-                <ProfilePictureUpload onImageUpdated={handleImageUpdated} />
               </div>
 
               <div className="space-y-4">
@@ -477,29 +461,13 @@ function JugadorDashboard() {
           <div className="lg:col-span-1">
             <Card className="p-6 mb-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="relative">
-                  {profileImage ? (
-                    <img 
-                      src={`${import.meta.env.VITE_API_URL}/api/imagenes/usuarios/${profileImage}`}
-                      alt="Foto de perfil"
-                      className="w-16 h-16 rounded-full object-cover border-2 border-amber-400"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
-                      <User className="w-8 h-8 text-amber-400" />
-                    </div>
-                  )}
-                </div>
+                <ProfilePictureUpload currentImage={profileImage} onImageUpdated={handleImageUpdated} />
                 <div>
                   <h3 className="text-lg font-semibold text-zinc-100">
                     {userProfile?.primerNombre || user?.firstName} {userProfile?.primerApellido || user?.lastName}
                   </h3>
                   <p className="text-sm text-zinc-500">Usuario activo</p>
                 </div>
-              </div>
-
-              <div className="mb-4">
-                <ProfilePictureUpload onImageUpdated={handleImageUpdated} />
               </div>
 
               <div className="space-y-4">

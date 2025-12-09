@@ -1,10 +1,10 @@
 import { useState, useContext, useRef, useCallback } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Button, Alert } from "./ui";
-import { Camera, Upload, X, Crop } from "lucide-react";
+import { Camera, Upload, X, Crop, User } from "lucide-react";
 import Cropper from "react-easy-crop";
 
-export default function ProfilePictureUpload({ onImageUpdated }) {
+export default function ProfilePictureUpload({ currentImage, onImageUpdated }) {
   const { user } = useContext(AuthContext);
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -154,76 +154,96 @@ export default function ProfilePictureUpload({ onImageUpdated }) {
 
   return (
     <>
+      {/* Clickable Profile Image */}
+      <div onClick={() => setShowModal(true)} className="relative group cursor-pointer">
+        {currentImage ? (
+          <img
+            src={`${import.meta.env.VITE_API_URL}/api/imagenes/usuarios/${currentImage}`}
+            alt="Foto de perfil"
+            className="w-16 h-16 rounded-full object-cover border-2 border-zinc-700 transition-all group-hover:border-zinc-400"
+          />
+        ) : (
+          <div className="w-16 h-16 rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center transition-all group-hover:border-amber-400">
+            <User className="w-8 h-8 text-zinc-500 group-hover:text-amber-400 transition-colors" />
+          </div>
+        )}
+
+        {/* Overlay on hover */}
+        <div className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <Camera className="w-6 h-6 text-white" />
+        </div>
+      </div>
+
+      {/* Success/Error notifications as toast */}
       {success && (
-        <div className="mb-4">
-          <Alert variant="success">{success}</Alert>
+        <div className="fixed top-24 right-6 z-60 animate-in slide-in-from-right duration-300">
+          <div className="bg-green-900/90 border border-green-500/50 px-6 py-4 text-sm text-white font-medium shadow-xl backdrop-blur-sm">
+            {success}
+          </div>
         </div>
       )}
 
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={() => setShowModal(true)}
-        className="flex items-center gap-2"
-      >
-        <Camera className="w-4 h-4" />
-        Cambiar foto
-      </Button>
-
+      {/* Upload Modal */}
       {showModal && !showCropper && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg max-w-md w-full p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-zinc-100">Cambiar foto de perfil</h3>
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-zinc-900 border border-zinc-800/50 max-w-md w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-zinc-100">Cambiar foto de perfil</h3>
               <button
                 onClick={handleCancel}
-                className="text-zinc-400 hover:text-zinc-100 transition-colors"
+                className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 p-2 transition-all rounded-sm"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {error && (
-              <div className="mb-4">
+              <div className="mb-6">
                 <Alert variant="error">{error}</Alert>
               </div>
             )}
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               {preview ? (
-                <div className="relative">
-                  <img
-                    src={preview}
-                    alt="Vista previa"
-                    className="w-full h-64 object-cover rounded-lg"
-                  />
-                  <button
-                    onClick={() => {
-                      setFile(null);
-                      setPreview(null);
-                    }}
-                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowCropper(true);
-                      setOriginalImage(preview);
-                    }}
-                    className="absolute bottom-2 right-2 bg-amber-500 text-white p-2 rounded-full hover:bg-amber-600 transition-colors"
-                  >
-                    <Crop className="w-4 h-4" />
-                  </button>
+                <div className="relative group">
+                  <div className="relative overflow-hidden border-2 border-zinc-800 shadow-lg">
+                    <img src={preview} alt="Vista previa" className="w-full h-72 object-cover" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+
+                  <div className="absolute top-3 right-3 flex gap-2">
+                    <button
+                      onClick={() => {
+                        setShowCropper(true);
+                        setOriginalImage(preview);
+                      }}
+                      className="bg-amber-600 hover:bg-amber-700 text-white p-2.5 shadow-lg transition-all rounded-sm"
+                      title="Recortar"
+                    >
+                      <Crop className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setFile(null);
+                        setPreview(null);
+                      }}
+                      className="bg-red-600 hover:bg-red-700 text-white p-2.5 shadow-lg transition-all rounded-sm"
+                      title="Eliminar"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-zinc-700 rounded-lg p-12 text-center cursor-pointer hover:border-amber-400 transition-colors"
+                  className="border-2 border-dashed border-zinc-700 p-16 text-center cursor-pointer hover:border-amber-400 hover:bg-zinc-900/50 transition-all group"
                 >
-                  <Upload className="w-12 h-12 text-zinc-500 mx-auto mb-4" />
-                  <p className="text-zinc-400 mb-2">Click para seleccionar una imagen</p>
-                  <p className="text-sm text-zinc-600">PNG, JPG o JPEG (máx. 5MB)</p>
+                  <div className="w-16 h-16 mx-auto mb-4 bg-zinc-800 rounded-full flex items-center justify-center group-hover:bg-amber-400/10 transition-colors">
+                    <Upload className="w-8 h-8 text-zinc-500 group-hover:text-amber-400 transition-colors" />
+                  </div>
+                  <p className="text-zinc-300 mb-2 font-medium">Selecciona una imagen</p>
+                  <p className="text-sm text-zinc-500">PNG, JPG o JPEG (máx. 5MB)</p>
                 </div>
               )}
 
@@ -235,7 +255,7 @@ export default function ProfilePictureUpload({ onImageUpdated }) {
                 className="hidden"
               />
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <Button variant="secondary" onClick={handleCancel} className="flex-1">
                   Cancelar
                 </Button>
@@ -246,7 +266,7 @@ export default function ProfilePictureUpload({ onImageUpdated }) {
                   disabled={!file || isLoading}
                   className="flex-1"
                 >
-                  {isLoading ? "Subiendo..." : "Guardar"}
+                  {isLoading ? "Subiendo..." : "Guardar cambios"}
                 </Button>
               </div>
             </div>
@@ -254,20 +274,21 @@ export default function ProfilePictureUpload({ onImageUpdated }) {
         </div>
       )}
 
+      {/* Cropper Modal */}
       {showCropper && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg max-w-2xl w-full p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-zinc-100">Recortar imagen</h3>
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-zinc-900 border border-zinc-800/50 max-w-3xl w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-zinc-100">Recortar imagen</h3>
               <button
                 onClick={handleCropCancel}
-                className="text-zinc-400 hover:text-zinc-100 transition-colors"
+                className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 p-2 transition-all rounded-sm"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="relative w-full h-96 bg-zinc-950 rounded-lg overflow-hidden mb-4">
+            <div className="relative w-full h-96 bg-zinc-950 overflow-hidden mb-6 border border-zinc-800">
               <Cropper
                 image={originalImage}
                 crop={crop}
@@ -278,19 +299,6 @@ export default function ProfilePictureUpload({ onImageUpdated }) {
                 onCropChange={setCrop}
                 onCropComplete={onCropComplete}
                 onZoomChange={setZoom}
-              />
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm text-zinc-400 mb-2">Zoom</label>
-              <input
-                type="range"
-                value={zoom}
-                min={1}
-                max={3}
-                step={0.1}
-                onChange={(e) => setZoom(Number(e.target.value))}
-                className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-amber-400"
               />
             </div>
 
