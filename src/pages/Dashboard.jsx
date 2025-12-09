@@ -21,6 +21,7 @@ import { getUserProfile } from "../services/authService";
 import dashboardService from "../services/dashboardService";
 import { Card, CardBody, Button, Badge, Spinner } from "../components/ui";
 import { useNavigate } from "react-router-dom";
+import ProfilePictureUpload from "../components/ProfilePictureUpload";
 
 export default function Dashboard() {
   const { user, logout } = useContext(AuthContext);
@@ -37,6 +38,7 @@ export default function Dashboard() {
 function AdminDashboard() {
   const { user, logout } = useContext(AuthContext);
   const [userProfile, setUserProfile] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [stats, setStats] = useState({
@@ -56,6 +58,7 @@ function AdminDashboard() {
       setLoading(true);
       const [profileData, statsData] = await Promise.all([getUserProfile(), dashboardService.getAdminStats()]);
       setUserProfile(profileData);
+      setProfileImage(profileData.imagenPerfil);
       setStats(statsData);
     } catch (err) {
       console.error("Error loading admin data:", err);
@@ -68,6 +71,10 @@ function AdminDashboard() {
     setRefreshing(true);
     await loadAdminData();
     setRefreshing(false);
+  };
+
+  const handleImageUpdated = (newImageUrl) => {
+    setProfileImage(newImageUrl);
   };
 
   const formatCurrency = (amount) => {
@@ -152,8 +159,18 @@ function AdminDashboard() {
           <div className="lg:col-span-1">
             <Card className="p-6 mb-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
-                  <User className="w-8 h-8 text-amber-400" />
+                <div className="relative">
+                  {profileImage ? (
+                    <img 
+                      src={`${import.meta.env.VITE_API_URL}/api/imagenes/usuarios/${profileImage}`}
+                      alt="Foto de perfil"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-amber-400"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
+                      <User className="w-8 h-8 text-amber-400" />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-zinc-100">
@@ -161,6 +178,10 @@ function AdminDashboard() {
                   </h3>
                   <p className="text-sm text-zinc-500">Administrador</p>
                 </div>
+              </div>
+
+              <div className="mb-4">
+                <ProfilePictureUpload onImageUpdated={handleImageUpdated} />
               </div>
 
               <div className="space-y-4">
@@ -279,6 +300,7 @@ function AdminDashboard() {
 function JugadorDashboard() {
   const { user, logout } = useContext(AuthContext);
   const [userProfile, setUserProfile] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   const [saldo, setSaldo] = useState(0);
   const [stats, setStats] = useState({
     totalTransactions: 0,
@@ -310,6 +332,7 @@ function JugadorDashboard() {
 
       // Actualizar perfil
       setUserProfile(profileData);
+      setProfileImage(profileData.imagenPerfil);
 
       // Actualizar saldo
       setSaldo(saldoData.saldo || 0);
@@ -340,6 +363,10 @@ function JugadorDashboard() {
     setRefreshing(true);
     await loadDashboardData();
     setRefreshing(false);
+  };
+
+  const handleImageUpdated = (newImageUrl) => {
+    setProfileImage(newImageUrl);
   };
 
   const formatCurrency = (amount) => {
@@ -450,8 +477,18 @@ function JugadorDashboard() {
           <div className="lg:col-span-1">
             <Card className="p-6 mb-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
-                  <User className="w-8 h-8 text-amber-400" />
+                <div className="relative">
+                  {profileImage ? (
+                    <img 
+                      src={`${import.meta.env.VITE_API_URL}/api/imagenes/usuarios/${profileImage}`}
+                      alt="Foto de perfil"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-amber-400"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
+                      <User className="w-8 h-8 text-amber-400" />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-zinc-100">
@@ -459,6 +496,10 @@ function JugadorDashboard() {
                   </h3>
                   <p className="text-sm text-zinc-500">Usuario activo</p>
                 </div>
+              </div>
+
+              <div className="mb-4">
+                <ProfilePictureUpload onImageUpdated={handleImageUpdated} />
               </div>
 
               <div className="space-y-4">
